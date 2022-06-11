@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
+using PerspectiveAPI.Models.DTO;
+
 namespace PerspectiveAPI.Controllers;
 
 [ApiController]
@@ -13,5 +15,11 @@ public class AuthController : ControllerBase
     {
         _logger = logger;
     }
-    
+
+    [HttpPost("register")]
+    public IActionResult Register([FromBody] RegisterDto dto)
+    {
+        
+        return Ok();
+    }
 }
