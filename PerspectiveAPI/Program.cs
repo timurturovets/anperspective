@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using PerspectiveAPI.Data;
+using PerspectiveAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,12 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
         };
     }
 );
+
+var authServiceSingleton = new AuthService(config["jwtSettings:issuer"],
+    config["jwtSettings:secret"],
+    config.GetValue<int>("jwtSettings:jwtLifeSpan"));
+
+services.AddSingleton(authServiceSingleton);
 var app = builder.Build();
 
 app.UseCors(options =>

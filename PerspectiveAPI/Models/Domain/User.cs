@@ -1,4 +1,5 @@
 ﻿
+namespace PerspectiveAPI.Models.Domain;
 
 public class User
 {

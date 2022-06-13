@@ -1,22 +1,24 @@
-﻿using System.Security.Claims;
+﻿using System.Text;
+using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
+
 using Microsoft.IdentityModel.Tokens;
+
 using PerspectiveAPI.Models.DTO;
+using PerspectiveAPI.Models.Domain;
 
 namespace PerspectiveAPI.Services;
 
 public class AuthService
 {
-    private readonly string _jwtSecret;
     private readonly string _issuer;
     private readonly int _jwtLifeSpan;
-
+    private readonly byte[] _key;
     public AuthService(string issuer, string jwtSecret, int jwtLifeSpan)
     {
         _issuer = issuer;
-        _jwtSecret = jwtSecret;
         _jwtLifeSpan = jwtLifeSpan;
+        _key = Encoding.UTF8.GetBytes(jwtSecret);
     }
 
     public JwtInfo GetJwtInfo(User user)
@@ -27,9 +29,8 @@ public class AuthService
         {
             new(ClaimTypes.Name, user.UserName!)
         };
-
-        var key = Encoding.UTF8.GetBytes(_jwtSecret);
-        var securityKey = new SymmetricSecurityKey(key);
+        
+        var securityKey = new SymmetricSecurityKey(_key);
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         
         var tokenDescriptor = new JwtSecurityToken(
@@ -48,5 +49,27 @@ public class AuthService
             Token = token,
             TokenLifeSpan = ((DateTimeOffset) expirationTime).ToUnixTimeSeconds()
         };
+    }
+
+    public bool ValidateToken(string token)
+    {
+        var key = new SymmetricSecurityKey(_key);
+        var handler = new JwtSecurityTokenHandler();
+        try
+        {
+            handler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _issuer,
+                IssuerSigningKey = key
+            }, out _);
+        }
+        catch
+        {
+            return false;
+        }
+
+        return true;
     }
 }
