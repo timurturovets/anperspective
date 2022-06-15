@@ -6,22 +6,22 @@ namespace PerspectiveAPI.Data.Repositories;
 
 public class RepositoryBase<T> where T: class
 {
-    private readonly AppDbContext _context;
-    protected RepositoryBase(AppDbContext context) => _context = context;
+    protected readonly AppDbContext Context;
+    protected RepositoryBase(AppDbContext context) => Context = context;
 
     public IEnumerable<T> GetAll()
     {
-        return _context.Set<T>().AsNoTracking();
+        return Context.Set<T>().AsNoTracking();
     }
 
     public T? Get(string id)
     {
-        return _context.Find<T>(id);
+        return Context.Find<T>(id);
     }
 
     public T? Get(string id, params Expression<Func<T, object>>[] includes)
     {
-        var query = _context.Set<T>();
+        var query = Context.Set<T>();
         foreach(var include in includes)
         {
             query.Include(include);
@@ -32,12 +32,12 @@ public class RepositoryBase<T> where T: class
 
     public T? GetBy(Expression<Func<T, bool>> predicate)
     {
-        return _context.Set<T>().FirstOrDefault(predicate);
+        return Context.Set<T>().FirstOrDefault(predicate);
     }
 
     public T? GetBy(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
     {
-        var query = _context.Set<T>();
+        var query = Context.Set<T>();
         foreach (var include in includes)
         {
             query.Include(include);
@@ -46,14 +46,18 @@ public class RepositoryBase<T> where T: class
         return query.FirstOrDefault(predicate);
     }
 
-    public void Delete(T entity)
+    public void Add(T entity)
     {
-        _context.Set<T>().Remove(entity);
-        _context.SaveChanges();
+        Context.Set<T>().Add(entity);
+        Context.SaveChanges();
     }
-
     public void Update(T entity)
     {
-        _context.Entry(entity).State = EntityState.Modified;
+        Context.Entry(entity).State = EntityState.Modified;
+    }
+    public void Delete(T entity)
+    {
+        Context.Set<T>().Remove(entity);
+        Context.SaveChanges();
     }
 }

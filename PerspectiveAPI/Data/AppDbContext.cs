@@ -7,7 +7,6 @@ namespace PerspectiveAPI.Data;
 #pragma warning disable 8618
 public sealed class AppDbContext : DbContext
 {
-    public override DatabaseFacade Database { get; }
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
         Database.EnsureCreated();

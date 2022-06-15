@@ -3,7 +3,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-
+using PerspectiveAPI;
 using PerspectiveAPI.Data;
 using PerspectiveAPI.Services;
 
@@ -38,7 +38,7 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     }
 );
 
-var authServiceSingleton = new AuthService(config["jwtSettings:issuer"],
+    var authServiceSingleton = new AuthService(config["jwtSettings:issuer"],
     config["jwtSettings:secret"],
     config.GetValue<int>("jwtSettings:jwtLifeSpan"));
 
@@ -51,6 +51,7 @@ app.UseCors(options =>
 });
 app.UseHttpsRedirection();
 
+app.UseAuthMiddleware();
 app.UseAuthentication();
 
 app.MapControllers();
