@@ -13,4 +13,5 @@ public sealed class AppDbContext : DbContext
     }
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Post> Posts { get; set; }
 }

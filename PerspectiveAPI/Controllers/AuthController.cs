@@ -27,14 +27,21 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public IActionResult Register([FromBody] RegisterDto dto)
+    public IActionResult Register([FromForm] RegisterDto dto)
     {
         if (_userRepo.CheckIfNameIsTaken(dto.UserName)) return Conflict();
         
         var user = new User { UserName = dto.UserName };
+        _userRepo.Add(user);
         _userRepo.SetPassword(user, dto.Password!);
-
+        
         var jwtInfo = _authService.GetJwtInfo(user);
         return Ok(new{ jwtInfo });
+    }
+
+    [HttpPost("login")]
+    public IActionResul Login([FromForm] LoginDto dto)
+    {
+        
     }
 }

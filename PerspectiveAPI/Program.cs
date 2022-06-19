@@ -20,6 +20,8 @@ services.AddDbContext<AppDbContext>(options =>
 
 services.AddControllers();
 
+var section = config.GetSection("jwtSettings");
+
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     options =>
     {
@@ -29,20 +31,21 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = config["jwtSettings:issuer"],
-            IssuerSigningKey = new
-                SymmetricSecurityKey
-                (Encoding.UTF8.GetBytes
-                    (config["jwtSettings:secret"]))
+            ValidIssuer = section.GetValue<string>("issuer"),
+            IssuerSigningKey = new SymmetricSecurityKey
+                (Encoding.UTF8.GetBytes(section.GetValue<string>("jwtSecret")))
         };
     }
 );
 
-    var authServiceSingleton = new AuthService(config["jwtSettings:issuer"],
-    config["jwtSettings:secret"],
-    config.GetValue<int>("jwtSettings:jwtLifeSpan"));
+var issuer = section.GetValue<string>("issuer");
+var secret = section.GetValue<string>("jwtSecret");
+var lifeSpan = section.GetValue<int>("jwtLifeSpan");
+
+var authServiceSingleton = new AuthService(issuer,secret, lifeSpan);
 
 services.AddSingleton(authServiceSingleton);
+
 var app = builder.Build();
 
 app.UseCors(options =>
