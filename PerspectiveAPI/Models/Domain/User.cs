@@ -28,4 +28,18 @@ public class User
     }
 
     public byte[] Salt { get; set; } = RandomNumberGenerator.GetBytes(16);
+
+    public bool CheckIfPasswordCorrect(string password)
+    {
+        password = Convert.ToBase64String(
+            KeyDerivation.Pbkdf2(
+                password,
+                Salt,
+                KeyDerivationPrf.HMACSHA256,
+                100000,
+                32
+            )
+        );
+        return password == HashedPassword;
+    }
 }

@@ -36,12 +36,17 @@ public class AuthController : ControllerBase
         _userRepo.SetPassword(user, dto.Password!);
         
         var jwtInfo = _authService.GetJwtInfo(user);
-        return Ok(new{ jwtInfo });
+        return Ok(new { jwtInfo });
     }
 
     [HttpPost("login")]
-    public IActionResul Login([FromForm] LoginDto dto)
+    public IActionResult Login([FromForm] LoginDto dto)
     {
-        
+        var user = _userRepo.GetBy(u => u.UserName == dto.UserName);
+        if (user is null) return NotFound();
+        if (!user.CheckIfPasswordCorrect(dto.Password)) return BadRequest();
+
+        var jwtInfo = _authService.GetJwtInfo(user);
+        return Ok(new { jwtInfo });
     }
 }

@@ -1,7 +1,11 @@
-﻿namespace PerspectiveAPI.Models.DTO;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PerspectiveAPI.Models.DTO;
 
 public class LoginDto
 {
-    public string? Username { get; set; }
-    public string? Password { get; set; }
+    [Required(ErrorMessage="Вы не ввели никнейм")]
+    public string? UserName { get; set; }
+    [Required(ErrorMessage="Вы не ввели пароль")]
+    public string Password { get; set; } = "";
 }
