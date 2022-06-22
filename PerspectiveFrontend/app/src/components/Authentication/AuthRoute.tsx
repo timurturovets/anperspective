@@ -1,7 +1,6 @@
 import React, { Component, ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
-import { AuthContextConsumer } from '../AuthContext'
-import LoginPage from './LoginPage'
+import { AuthContextConsumer } from '../../AuthContext'
 
 interface AuthRouteProps {
     element: ReactNode

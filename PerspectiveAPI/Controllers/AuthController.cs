@@ -36,7 +36,7 @@ public class AuthController : ControllerBase
         _userRepo.SetPassword(user, dto.Password!);
         
         var jwtInfo = _authService.GetJwtInfo(user);
-        return Ok(new { jwtInfo });
+        return Ok(jwtInfo);
     }
 
     [HttpPost("login")]
@@ -47,6 +47,6 @@ public class AuthController : ControllerBase
         if (!user.CheckIfPasswordCorrect(dto.Password)) return BadRequest();
 
         var jwtInfo = _authService.GetJwtInfo(user);
-        return Ok(new { jwtInfo });
+        return Ok(jwtInfo);
     }
 }
