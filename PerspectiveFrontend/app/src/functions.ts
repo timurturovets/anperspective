@@ -12,3 +12,5 @@ export function post(route: string, options?: RequestInit) : Promise<Response> {
         method: 'POST'
     });
 }
+
+fetch('/api/Posts/post/')

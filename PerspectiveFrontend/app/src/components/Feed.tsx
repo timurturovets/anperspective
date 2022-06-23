@@ -8,6 +8,7 @@ export interface HeadlineData {
     author: string, 
     imageLocation: string
 }
+
 interface FeedState {
     isLoading: Boolean,
     news: HeadlineData[]
@@ -23,7 +24,7 @@ export default class Feed extends Component<any, FeedState> {
         }
     }
     
-    render(){
+    render() {
         const { isLoading, news } = this.state;
         return isLoading
             ? <h3>Загрузка...</h3>

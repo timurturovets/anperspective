@@ -12,7 +12,7 @@ export default class App extends React.Component {
         <Layout>
           <Routes>
             <Route path="/" element={<Home />}/>
-            <Route path="/feed" />
+            <Route path="/post/" />
             <Route path="/about" />
             <Route path="/account" />
             <Route path="/login" element={<Login />} />
