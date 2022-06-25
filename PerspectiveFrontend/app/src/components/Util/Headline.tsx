@@ -27,5 +27,4 @@ export default class Headline extends Component<HeadlineProps, any> {
                 </div>
                 </Link>
     }
-    
 }

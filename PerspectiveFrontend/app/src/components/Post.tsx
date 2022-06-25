@@ -41,7 +41,7 @@ export default class Post extends Component<any, PostState> {
     }
     
     getInfo = async () => {
-        const slug = this.props.location.slug;
+        const slug = this.props.location.state;
         
         await get(`/api/posts/post/${slug}`).then(async response => {
            if(response.ok){

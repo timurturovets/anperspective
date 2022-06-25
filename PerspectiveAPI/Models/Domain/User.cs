@@ -9,37 +9,41 @@ public class User
 {
     public string? UserId { get; set; }
     public string? UserName { get; set; }
-    
-    private string? _password;
+    public UserRole Role { get; set; } = UserRole.Default;
 
+    #region Password
+    private string? _password;
     [BackingField(nameof(_password))]
-    public string? HashedPassword
+    public string? Password
     {
         get => _password;
-        set =>
-            _password = Convert.ToBase64String(
-                KeyDerivation.Pbkdf2(
-                    value ?? "",
-                    Salt,
-                    KeyDerivationPrf.HMACSHA256,
-                    100000,
-                    32
-                ));
+        set => _password = HashPassword(value ?? "");
     }
 
     public byte[] Salt { get; set; } = RandomNumberGenerator.GetBytes(16);
 
     public bool CheckIfPasswordCorrect(string password)
     {
-        password = Convert.ToBase64String(
-            KeyDerivation.Pbkdf2(
-                password,
+        password = HashPassword(password);
+        return password == Password;
+    }
+
+    private string HashPassword(string value)
+    {
+        return Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                value,
                 Salt,
                 KeyDerivationPrf.HMACSHA256,
                 100000,
                 32
-            )
-        );
-        return password == HashedPassword;
+            ));
     }
+    #endregion
+}
+
+public enum UserRole
+{
+    Default,
+    Editor,
+    Admin
 }

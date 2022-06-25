@@ -35,7 +35,24 @@ export default class Register extends Component<any, RegisterPageState> {
         </form>
     }
 
-    handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) : void => {
+    handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) : void =>  {
+        e.preventDefault();
+        const form = (e.target as HTMLInputElement).form as HTMLFormElement;
+        const formData = new FormData(form);
 
+        post('/api/auth/login', {
+            body: formData
+        }).then(async response => {
+            if(response.status === 200) {
+                const result = await response.json();
+
+                const token: string = result.token;
+                const expirationTime: number = result.expirationTime;
+                let now = new Date();
+                now.setTime(now.getTime() + expirationTime * 1000);
+                const expires = "expires=" + now.toUTCString();
+                document.cookie = "token=" + token + ";" + expires + "; path=/";
+            }
+        });
     }
 }

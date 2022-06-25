@@ -27,7 +27,8 @@ public class AuthService
 
         Claim[] claims =
         {
-            new(ClaimTypes.Name, user.UserName!)
+            new(ClaimTypes.Name, user.UserName!),
+            new(ClaimTypes.Role, $"{user.Role}")
         };
         
         var securityKey = new SymmetricSecurityKey(_key);

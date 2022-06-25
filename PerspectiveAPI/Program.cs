@@ -56,6 +56,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthMiddleware();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

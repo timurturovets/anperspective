@@ -31,9 +31,12 @@ public class AuthController : ControllerBase
     {
         if (_userRepo.CheckIfNameIsTaken(dto.UserName)) return Conflict();
         
-        var user = new User { UserName = dto.UserName };
+        var user = new User
+        {
+            UserName = dto.UserName,
+            Password = dto.Password
+        };
         _userRepo.Add(user);
-        _userRepo.SetPassword(user, dto.Password!);
         
         var jwtInfo = _authService.GetJwtInfo(user);
         return Ok(jwtInfo);

@@ -46,16 +46,16 @@ public class RepositoryBase<T> where T: class
         return query.FirstOrDefault(predicate);
     }
 
-    public void Add(T entity)
+    public virtual void Add(T entity)
     {
         Context.Set<T>().Add(entity);
         Context.SaveChanges();
     }
-    public void Update(T entity)
+    public virtual void Update(T entity)
     {
         Context.Entry(entity).State = EntityState.Modified;
     }
-    public void Delete(T entity)
+    public virtual void Delete(T entity)
     {
         Context.Set<T>().Remove(entity);
         Context.SaveChanges();
