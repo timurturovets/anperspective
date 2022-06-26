@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Navigate } from 'react-router-dom'
-import { post } from '../../functions'
+import { request } from '../../request'
+import { AuthContextConsumer } from '../../AuthContext'
 
 interface RegisterPageState{
     alreadyRegistered: Boolean
@@ -15,32 +16,41 @@ export default class Register extends Component<any, RegisterPageState> {
     }
 
     render() {
-        return this.state.alreadyRegistered
-        ? <Navigate to="/login" />
-        : <form>
-            <label>Электронная почта</label>
-            <input type="text" name="email" />
+        return <AuthContextConsumer>
+            {({setStatus}) =>
+                this.state.alreadyRegistered
+                ? <Navigate to="/login" />
+                : <form>
+                <label>Электронная почта</label>
+                <input type="text" name="email" />
 
-            <label>Пароль</label>
-            <input type="text" name="password" />
-            
-            <button className="btn btn-outline-success"
-                onClick={e=>this.handleSubmit(e)}>
+                <label>Пароль</label>
+                <input type="text" name="password" />
 
-            </button>
-            <button className="btn btn-outline-primary"
+                <button className="btn btn-outline-success"
+                onClick={e=>this.handleSubmit(e, setStatus)}>
+
+                </button>
+                <button className="btn btn-outline-primary"
                 onClick={e=>this.setState({alreadyRegistered: true})}>
                 Уже есть аккаунт?
-            </button>
-        </form>
+                </button>
+                </form>
+            }
+        </AuthContextConsumer>
     }
 
-    handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) : void =>  {
-        e.preventDefault();
-        const form = (e.target as HTMLInputElement).form as HTMLFormElement;
+    handleSubmit = 
+        async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+         setStatus: (s: Boolean, r:string) => void) 
+            : Promise<void> =>  {
+        
+        event.preventDefault();
+        const form = (event.target as HTMLInputElement).form as HTMLFormElement;
         const formData = new FormData(form);
 
-        post('/api/auth/login', {
+        await request('/api/auth/login', {
+            method: 'POST',
             body: formData
         }).then(async response => {
             if(response.status === 200) {
@@ -52,6 +62,9 @@ export default class Register extends Component<any, RegisterPageState> {
                 now.setTime(now.getTime() + expirationTime * 1000);
                 const expires = "expires=" + now.toUTCString();
                 document.cookie = "token=" + token + ";" + expires + "; path=/";
+                
+                const role = result.role;
+                setStatus(true, role);
             }
         });
     }

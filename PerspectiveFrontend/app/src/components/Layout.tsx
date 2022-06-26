@@ -1,6 +1,5 @@
 import React, { Component, ReactNode } from 'react'
-import Navbar from './Navbar'
-
+import NavigationHeader from './NavigationHeader'
 
 interface LayoutProps {
     children: ReactNode
@@ -12,9 +11,8 @@ export default class Layout extends Component<LayoutProps, any> {
 
     render() {
         return <>
-            <Navbar />
+            <NavigationHeader />
             {this.props.children}
-            
         </>
     }
 }

@@ -48,7 +48,8 @@ public class AuthService
         {
             UserId = user.UserId,
             Token = token,
-            TokenLifeSpan = ((DateTimeOffset) expirationTime).ToUnixTimeSeconds()
+            TokenLifeSpan = ((DateTimeOffset) expirationTime).ToUnixTimeSeconds(),
+            Role = user.GetRole()
         };
     }
 

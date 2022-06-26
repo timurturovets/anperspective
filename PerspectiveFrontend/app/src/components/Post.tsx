@@ -1,5 +1,5 @@
 ﻿import React, { Component } from 'react'
-import { get } from '../functions'
+import { request } from '../request'
 
 interface PostInfo {
     header: string,
@@ -43,7 +43,7 @@ export default class Post extends Component<any, PostState> {
     getInfo = async () => {
         const slug = this.props.location.state;
         
-        await get(`/api/posts/post/${slug}`).then(async response => {
+        await request(`/api/posts/post/${slug}`).then(async response => {
            if(response.ok){
                const result = await response.json();
                this.setState({isLoading: false, info: result as PostInfo});

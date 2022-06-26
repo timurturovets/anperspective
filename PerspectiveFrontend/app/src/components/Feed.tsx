@@ -23,11 +23,15 @@ export default class Feed extends Component<any, FeedState> {
             news: []
         }
     }
-    
+    componentDidMount(){
+        
+    }
     render() {
         const { isLoading, news } = this.state;
         return isLoading
             ? <h3>Загрузка...</h3>
             : news.map(n=><Headline data={n} /> );
     }
+    
+    
 }

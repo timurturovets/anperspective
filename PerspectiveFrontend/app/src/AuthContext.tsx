@@ -2,7 +2,8 @@ import React, { ReactNode, Component } from 'react'
 
 const { Provider, Consumer } = React.createContext({
     isAuthenticated: false,
-    setStatus: (status: Boolean) => { }
+    role: "Default",
+    setStatus: (status: Boolean, role: string) => { }
 });
 
 interface AuthContextProviderProps {
@@ -14,16 +15,18 @@ export class AuthContextProvider extends Component<AuthContextProviderProps, any
         super(props);
 
         this.state = {
-            isAuthenticated: false
+            isAuthenticated: false,
+            role: "Default"
         }
     }
 
-    setStatus = (status: Boolean) => {
-        this.setState({ isAuthenticted: status })
+    setStatus = (status: Boolean, role: string) => {
+        this.setState({ isAuthenticated: status, role: role })
     }
 
     render() {
-        return <Provider value={{isAuthenticated: this.state.isAuthenticated, setStatus: this.setStatus}}>
+        const { isAuthenticated, role } = this.state;
+        return <Provider value={{isAuthenticated: isAuthenticated, role: role, setStatus: this.setStatus}}>
             {this.props.children}
         </Provider>
     }

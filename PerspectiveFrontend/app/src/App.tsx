@@ -19,9 +19,7 @@ export default class App extends React.Component {
             <Route path="/account" />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/edit">
-              <AuthRoute element={<Edit />} />
-            </Route>
+            <Route path="/edit" element={<AuthRoute element={<Edit />} />} />
           </Routes>
         </Layout>
     </BrowserRouter>
