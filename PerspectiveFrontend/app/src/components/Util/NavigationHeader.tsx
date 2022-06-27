@@ -26,7 +26,9 @@ export default class NavigationHeader extends Component {
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/about">Об агентстве</Nav.Link>
                         <Nav.Link as={Link} to="/login">Личный кабинет</Nav.Link>
-                        {isAuthenticated && (role==="Editor" || role==="Admin") 
+                        {isAuthenticated 
+                        && (role.toLowerCase() === "editor" 
+                            || role.toLowerCase() === "admin") 
                             ? <Nav.Link as={Link} to="/edit">Редактировать посты</Nav.Link>
                             : null }
                     </Nav>

@@ -4,38 +4,61 @@ import { request } from '../../request'
 import { AuthContextConsumer } from '../../AuthContext'
 
 interface RegisterPageState{
-    alreadyRegistered: Boolean
+    alreadyRegistered: Boolean,
+    userNameErrors?: string[],
+    passwordErrors?: string[]
 }
 export default class Register extends Component<any, RegisterPageState> {
     constructor(props: any){
         super(props);
 
         this.state = {
-            alreadyRegistered: false
+            alreadyRegistered: false,
+            userNameErrors: undefined,
+            passwordErrors: undefined
         };
     }
 
     render() {
+        const { alreadyRegistered, userNameErrors, passwordErrors } = this.state;
         return <AuthContextConsumer>
             {({setStatus}) =>
-                this.state.alreadyRegistered
+                alreadyRegistered
                 ? <Navigate to="/login" />
-                : <form>
-                <label>Электронная почта</label>
-                <input type="text" name="email" />
-
-                <label>Пароль</label>
-                <input type="text" name="password" />
-
-                <button className="btn btn-outline-success"
-                onClick={e=>this.handleSubmit(e, setStatus)}>
-
-                </button>
-                <button className="btn btn-outline-primary"
-                onClick={e=>this.setState({alreadyRegistered: true})}>
-                Уже есть аккаунт?
-                </button>
-                </form>
+                : <div className="m-auto text-center" style={{width: '50%'}}>
+                        <form>
+                            <div className="form-group my-1">
+                                <label>Имя пользователя</label>
+                                {userNameErrors
+                                    ? <span className="text-danger">
+                                        {userNameErrors.map(err=><p>{err}</p>)}
+                                    </span>
+                                    : null}
+                                <input className="form-control" type="text" name="username"/>
+                            </div>
+                            <div className="form-group mb-1">
+                                <label>Пароль</label>
+                                {passwordErrors
+                                    ? <span className="text-danger">
+                                        {passwordErrors.map(err=><p>{err}</p>)}
+                                    </span>
+                                    : null}
+                                <input className="form-control" type="text" name="password"/>
+                            </div>
+                            <div className="form-group mb-1">
+                                <label>Подтвердите пароль</label>
+                                <input className="form-control" type="text" name="passwordconfirmation"/>
+                            </div>
+                            <button className="btn btn-lg btn-outline-success mb-1"
+                                    onClick={e => this.handleSubmit(e, setStatus)}>
+                                Зарегистрироваться
+                            </button><br />
+                            <button className="btn btn-sm btn-outline-primary"
+                                    onClick={e => this.setState({alreadyRegistered: true})}>
+                                Уже зарегистрированы??
+                            </button>
+                        </form>
+                    </div>
             }
         </AuthContextConsumer>
     }
@@ -49,13 +72,12 @@ export default class Register extends Component<any, RegisterPageState> {
         const form = (event.target as HTMLInputElement).form as HTMLFormElement;
         const formData = new FormData(form);
 
-        await request('/api/auth/login', {
+        await request('/api/auth/register', {
             method: 'POST',
             body: formData
         }).then(async response => {
+            const result = await response.json();
             if(response.status === 200) {
-                const result = await response.json();
-
                 const token: string = result.token;
                 const expirationTime: number = result.expirationTime;
                 let now = new Date();
@@ -65,6 +87,13 @@ export default class Register extends Component<any, RegisterPageState> {
                 
                 const role = result.role;
                 setStatus(true, role);
+            }
+            if (response.status === 400) {
+                const errors = result.errors;
+                this.setState({
+                    userNameErrors: errors.UserName,
+                    passwordErrors: errors.Password
+                });
             }
         });
     }

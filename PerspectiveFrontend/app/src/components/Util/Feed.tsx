@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Headline  from './Headline'
+import Loading from './Loading'
 import { request } from '../../request'
 
 export interface HeadlineData {
@@ -30,7 +31,7 @@ export default class Feed extends Component<any, FeedState> {
     render() {
         const { isLoading, news } = this.state;
         return isLoading
-            ? <h3>Загрузка...</h3>
+            ? <Loading withText />
             : news.map(n=><Headline data={n} /> );
     }
     

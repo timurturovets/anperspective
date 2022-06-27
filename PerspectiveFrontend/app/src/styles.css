@@ -13,3 +13,10 @@
     height: 68.5px;
     margin-top: -6px;
 }
+
+.loading {
+    padding: 5%;
+}
+.loading img {
+    border-radius: 10px;
+}

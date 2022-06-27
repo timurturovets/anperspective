@@ -35,7 +35,7 @@ export default class Post extends Component<any, PostState> {
             : <>
                 <h1>{info?.header}</h1>
                 <p>Опубликовал {info?.authorName} {info?.timePosted}</p>
-                <div dangerouslySetInnerHTML={{__html: info?.rawHtml || ""}}>0</div>
+                <div dangerouslySetInnerHTML={{__html: info?.rawHtml || ""}}></div>
             </>
     }
     

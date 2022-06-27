@@ -5,29 +5,44 @@ import { AuthContextConsumer } from '../../AuthContext'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 interface LoginPageState {
-    notRegistered: Boolean
+    notRegistered: Boolean,
+    userNameErrors?: string[],
+    passwordErrors?: string[]
 }
 export default class Login extends Component<any, LoginPageState> {
     constructor(props: any){
         super(props);
         this.state = {
-            notRegistered: false
+            notRegistered: false,
+            userNameErrors: undefined,
+            passwordErrors: undefined
         };
     }
 
     render() {
+        const { notRegistered, userNameErrors, passwordErrors } = this.state;
         return <AuthContextConsumer>
             {({setStatus}) =>
-                this.state.notRegistered
+                notRegistered
                     ? <Navigate to="/register"/>
                     : <div className="m-auto text-center" style={{width: '50%'}}>
                         <form>
                             <div className="form-group my-1">
                                 <label>Имя пользователя</label>
+                                {userNameErrors
+                                    ? <span className="text-danger">
+                                        {userNameErrors.map(err=><p>{err}</p>)}
+                                    </span>
+                                    : null}
                                 <input className="form-control" type="text" name="username"/>
                             </div>
                             <div className="form-group mb-1">
                                 <label>Пароль</label>
+                                {passwordErrors
+                                    ? <span className="text-danger">
+                                        {passwordErrors.map(err=><p>{err}</p>)}
+                                    </span>
+                                    : null}
                                 <input className="form-control" type="text" name="password"/>
                             </div>
                             <button className="btn btn-lg btn-outline-success mb-1"
@@ -57,9 +72,9 @@ export default class Login extends Component<any, LoginPageState> {
             method: 'POST',
             body: formData
         }).then(async response => {
+            const result = await response.json();
+            
             if(response.status === 200) {
-                const result = await response.json();
-
                 const token: string = result.token;
                 const expirationTime: number = result.expirationTime;
                 let now = new Date();
@@ -70,9 +85,13 @@ export default class Login extends Component<any, LoginPageState> {
                 const role = result.role;
                 setStatus(true, role);
             }
-            if(response.status === 400) {
-                const errors = await response.json();
-                console.log(errors);
+            
+            if (response.status === 400) {
+                const errors = result.errors;
+                this.setState({
+                    userNameErrors: errors.UserName,
+                    passwordErrors: errors.Password
+                });
             }
         });
     }
