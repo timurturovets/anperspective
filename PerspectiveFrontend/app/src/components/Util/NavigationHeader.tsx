@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import {Link, NavLink} from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { Container } from "react-bootstrap"
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
-import { Container, NavbarBrand, NavItem } from "react-bootstrap";
-import { AuthContextConsumer} from "../AuthContext";
+import { AuthContextConsumer } from "../../AuthContext"
+import '../../styles.css'
 
 export default class NavigationHeader extends Component { 
     constructor(props: any){
@@ -13,14 +14,15 @@ export default class NavigationHeader extends Component {
     render() {
         return <AuthContextConsumer>
             {({isAuthenticated, role}) =>
-                <Navbar expand="lg">
+                <Navbar>
                     <Container>
                         <Navbar.Brand>
-                            <Nav.Link as={Link} to="/" style={{width: "100%", height: "100%"}}>
-                                АН Перспектива 
+                            <Nav.Link as={Link} to="/">
+                                <div className="logo">
+                                    <img src="/logo.png" alt="" className="img-fluid" />
+                                </div>
                             </Nav.Link>
                         </Navbar.Brand>
-                        <Navbar.Toggle/>
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/about">Об агентстве</Nav.Link>
                         <Nav.Link as={Link} to="/login">Личный кабинет</Nav.Link>
@@ -28,6 +30,7 @@ export default class NavigationHeader extends Component {
                             ? <Nav.Link as={Link} to="/edit">Редактировать посты</Nav.Link>
                             : null }
                     </Nav>
+                    <hr />
                     </Container>
                 </Navbar>
             }

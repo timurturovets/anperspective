@@ -18,12 +18,15 @@ public class PostsController : ControllerBase
     }
 
     [HttpGet("all")]
-    public IEnumerable<PostInfo> All([FromQuery] int count)
+    public IActionResult All([FromQuery] int count)
     {
-        var posts = _postRepo.GetAll().Select(p => p.ToInfo());
-        if (count > 0) posts = posts.Take(count);
+        var posts = _postRepo.GetAll().Select(p => p.ToInfo()).ToList();
+        
+        if (posts.Count < 1) return NoContent();
+        
+        if (count > 0) posts = posts.Take(count).ToList();
 
-        return posts;
+        return Ok(posts);
     }
 
     [HttpGet("post/{slug}")]

@@ -1,7 +1,8 @@
 ﻿import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { HeadlineData } from '../Feed'
+import { HeadlineData } from './Feed'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import '../../styles.css'
 
 interface HeadlineProps {
     data: HeadlineData
@@ -17,7 +18,7 @@ export default class Headline extends Component<HeadlineProps, any> {
         
         const url = `${process.env.REACT_APP_API_URL}/${imageLocation}`;
         
-        return <Link to={"/post"} state={slug}>
+        return <Link to={`/post?s=${slug}`} className="headline">
                 <div className="d-flex flex-row">
                     <hr />
                     <img src={url} alt="" style={{height: "100%"}} />

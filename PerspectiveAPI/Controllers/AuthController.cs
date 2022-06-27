@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using PerspectiveAPI.Services;
@@ -51,5 +52,15 @@ public class AuthController : ControllerBase
 
         var jwtInfo = _authService.GetJwtInfo(user);
         return Ok(jwtInfo);
+    }
+
+    [Authorize]
+    [HttpPost("get-role")]
+    public IActionResult GetRole()
+    {
+        var user = _userRepo.GetByClaims(User);
+        if (user is null) return Conflict();
+
+        return Ok(user.GetRole());
     }
 }

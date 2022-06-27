@@ -5,9 +5,16 @@ export default class Edit extends Component {
         super(props);
     }
     
+    componentDidMount() {
+        this.checkForAuthorization();
+    }
     render(){
         return <>
             
         </>
+    }
+    
+    checkForAuthorization = async () => {
+        
     }
 }

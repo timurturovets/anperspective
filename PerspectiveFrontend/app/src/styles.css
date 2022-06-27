@@ -1,0 +1,15 @@
+﻿.layout-container {
+    margin-left: 7.35%;
+    margin-right: 7.35%;
+}
+
+.headline {
+    text-decoration: none;
+}
+
+.logo {
+    overflow: hidden;
+    width: 165.75px;
+    height: 68.5px;
+    margin-top: -6px;
+}

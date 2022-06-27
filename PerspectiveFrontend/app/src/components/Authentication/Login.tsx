@@ -22,13 +22,15 @@ export default class Login extends Component<any, LoginPageState> {
                     ? <Navigate to="/register"/>
                     : <div className="m-auto text-center" style={{width: '50%'}}>
                         <form>
-                            <label>Электронная почта</label>
-                            <input className="form-control" type="text" name="email"/>
-    
-                            <label>Пароль</label>
-                            <input className="form-control" type="text" name="password"/>
-    
-                            <button className="btn btn-lg btn-outline-success"
+                            <div className="form-group my-1">
+                                <label>Имя пользователя</label>
+                                <input className="form-control" type="text" name="username"/>
+                            </div>
+                            <div className="form-group mb-1">
+                                <label>Пароль</label>
+                                <input className="form-control" type="text" name="password"/>
+                            </div>
+                            <button className="btn btn-lg btn-outline-success mb-1"
                                     onClick={e => this.handleSubmit(e, setStatus)}>
                                 Войти
                             </button><br />
@@ -67,6 +69,10 @@ export default class Login extends Component<any, LoginPageState> {
                 
                 const role = result.role;
                 setStatus(true, role);
+            }
+            if(response.status === 400) {
+                const errors = await response.json();
+                console.log(errors);
             }
         });
     }

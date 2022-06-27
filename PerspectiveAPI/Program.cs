@@ -3,9 +3,11 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using PerspectiveAPI;
 using PerspectiveAPI.Data;
 using PerspectiveAPI.Services;
+using PerspectiveAPI.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,8 +45,10 @@ var secret = section.GetValue<string>("jwtSecret");
 var lifeSpan = section.GetValue<int>("jwtLifeSpan");
 
 var authServiceSingleton = new AuthService(issuer,secret, lifeSpan);
-
 services.AddSingleton(authServiceSingleton);
+
+services.AddTransient<PostRepository>();
+services.AddTransient<UserRepository>();
 
 var app = builder.Build();
 

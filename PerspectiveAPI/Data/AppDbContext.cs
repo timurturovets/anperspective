@@ -15,14 +15,26 @@ public sealed class AppDbContext : DbContext
                 {
                     UserId = "1",
                     UserName = "admin",
-                    Password="admin",
+                    Password = "admin",
                     Role = UserRole.Admin
+                }
+            );
+
+        builder.Entity<Post>()
+            .HasData(
+                new Post
+                {
+                    PostId = "1",
+                    Header = "First post",
+                    RawHtml = "<h1>Это реальный пост, ребята</h1>",
+                    TimePosted = DateTime.UtcNow,
+                    AuthorId = "1"
                 }
             );
     }
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        Database.EnsureCreated();
+        //Database.EnsureCreated();
     }
 
     public DbSet<User> Users { get; set; }

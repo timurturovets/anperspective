@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography.Xml;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 using PerspectiveAPI.Models.DTO;

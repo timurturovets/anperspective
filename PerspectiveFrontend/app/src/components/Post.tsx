@@ -29,20 +29,23 @@ export default class Post extends Component<any, PostState> {
     
     render() {
         const { isLoading, info } = this.state;
-        const { header, authorName, rawHtml, timePosted } = info as PostInfo;
         
         return isLoading 
             ? <h3>Загрузка...</h3>
             : <>
-                <h1>{header}</h1>
-                <p>Опубликовал {authorName} {timePosted}</p>
-                <div>{rawHtml}</div>
+                <h1>{info?.header}</h1>
+                <p>Опубликовал {info?.authorName} {info?.timePosted}</p>
+                <div dangerouslySetInnerHTML={{__html: info?.rawHtml || ""}}>0</div>
             </>
     }
     
     getInfo = async () => {
-        const slug = this.props.location.state;
-        
+        const query = new URLSearchParams(window.location.search);
+        if(!query.has('s')){
+            window.location.href="/";
+            return;
+        }
+        const slug = query.get('s');
         await request(`/api/posts/post/${slug}`).then(async response => {
            if(response.ok){
                const result = await response.json();

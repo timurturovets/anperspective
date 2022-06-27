@@ -19,6 +19,7 @@ public class Post
     public string? ImagePhysicalPath { get; set; }
     public bool HasImage => !string.IsNullOrEmpty(ImageLocation);
     public User? Author { get; set; }
+    public string? AuthorId{ get;set; }
     
     #region Methods
 
@@ -34,11 +35,11 @@ public class Post
         return new PostInfo
         {
             PostId = PostId,
-            TimePosted = TimePosted.ToString("HH:mm:ss dd:MM:yyyy"),
+            TimePosted = TimePosted.ToString("HH:mm:ss dd.MM.yyyy"),
             Header = Header,
             Slug = Slug,
             ImageLocation = ImageLocation,
-            AuthorName = Author!.UserName
+            AuthorName = Author?.UserName ?? "Аноним"
         };
     }
 
@@ -48,8 +49,8 @@ public class Post
         {
             Header = Header,
             RawHtml = RawHtml,
-            AuthorName = Author!.UserName,
-            TimePosted = TimePosted.ToString("HH:mm:ss dd:MM:yyyy")
+            AuthorName = Author?.UserName ?? "Аноним",
+            TimePosted = TimePosted.ToString("HH:mm:ss dd.MM.yyyy")
         };
     }
 #endregion

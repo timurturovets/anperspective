@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import HomeHeader from './Util/HomeHeader'
-import Feed from './Feed'
-import Footer from './Footer'
+import Feed from './Util/Feed'
+import Footer from './Util/Footer'
 
 export default class Home extends Component {
     constructor(props: any) {
@@ -12,7 +12,6 @@ export default class Home extends Component {
         return <>
             <HomeHeader />
             <Feed />
-            <Footer />
         </>
     }
 }

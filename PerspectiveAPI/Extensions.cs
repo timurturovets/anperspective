@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace PerspectiveAPI;
@@ -14,16 +15,19 @@ public static class Extensions
     public static string Slugify(this string text)
     {
         if (text.Length < 1) return string.Empty;
-        
-        var slug = text.ToLowerInvariant();
-        var bytes = Encoding.GetEncoding("Cyrillic").GetBytes(slug);
-        slug = Encoding.ASCII.GetString(bytes);
-            
-        slug = Regex.Replace(slug, @"\s", "-", RegexOptions.Compiled);
-        slug = Regex.Replace(slug, @"([^a-z0-9\s-_])", "$1", RegexOptions.Compiled);
-        slug = slug.Trim('-', '_');
-        slug = Regex.Replace(slug, @"([-_]){2,}", "$1", RegexOptions.Compiled);
-            
+
+        var slug = text.Normalize(NormalizationForm.FormD);
+        slug = string.Concat(slug
+            .Where(c => 
+                CharUnicodeInfo
+                .GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+        );
+        slug = slug.Normalize(NormalizationForm.FormC).ToLowerInvariant();
+        slug = Regex.Replace(slug, @"[^a-zA-Z0-9\s-]", string.Empty);
+        slug = Regex.Replace(slug, @"\s+", " ");
+        slug = slug.Trim();
+        slug = Regex.Replace(slug, @"\s", "-");
+
         return slug;
     }
 }
