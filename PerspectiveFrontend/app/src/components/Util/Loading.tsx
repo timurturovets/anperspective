@@ -33,7 +33,7 @@ export default class Loading extends Component<LoadingProps, LoadingState> {
     render() {
         const { angle } = this.state;
         const { side, withText } = this.props;
-        const style = {transform: `rotate(${angle}deg)`, width: 100, height: 100};
+        const style = {transform: `rotate(${angle}deg)`, width: 35, height: 35};
         
         if(side) {
             style.width = side;

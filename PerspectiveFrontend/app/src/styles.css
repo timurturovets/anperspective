@@ -9,14 +9,11 @@
 
 .logo {
     overflow: hidden;
-    width: 165.75px;
-    height: 68.5px;
+    width: 136px;
+    height: 49px;
     margin-top: -6px;
 }
 
-.loading {
-    padding: 5%;
-}
 .loading img {
-    border-radius: 10px;
+    border-radius: 100px;
 }

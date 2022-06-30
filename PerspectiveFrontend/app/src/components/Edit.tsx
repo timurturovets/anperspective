@@ -1,4 +1,5 @@
 ﻿import React, { Component } from 'react'
+import Loading from './Util/Loading'
 import { request } from '../request'
 
 interface EditState {
@@ -8,7 +9,9 @@ export default class Edit extends Component<any, EditState> {
     constructor(props: any){
         super(props);
         
-        
+        this.state = {
+            isAuthorized: false
+        };
     }
     
     componentDidMount() {
@@ -17,7 +20,7 @@ export default class Edit extends Component<any, EditState> {
     render(){
         const { isAuthorized } = this.state;
         return !isAuthorized
-            ? <p>Загрузка</p>
+            ? <Loading withText />
             : null
     }
     
@@ -33,6 +36,8 @@ export default class Edit extends Component<any, EditState> {
                 window.location.href = "/";
                 return;
             }
+            
+            this.setState({isAuthorized: true});
         });
     }
 }

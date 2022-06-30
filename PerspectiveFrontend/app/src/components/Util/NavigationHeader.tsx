@@ -27,13 +27,16 @@ export default class NavigationHeader extends Component {
                         <Nav.Link as={Link} to="/about">Об агентстве</Nav.Link>
                         <Nav.Link as={Link} to="/login">Личный кабинет</Nav.Link>
                         {isAuthenticated 
-                        && (role.toLowerCase() === "editor" 
-                            || role.toLowerCase() === "admin") 
-                            ? <Nav.Link as={Link} to="/edit">Редактировать посты</Nav.Link>
-                            : null }
+                            ? <>
+                                { role.toLowerCase() === "editor" || role.toLowerCase() === "admin"
+                                    ? <Nav.Link as={Link} to="/edit">Редактировать посты</Nav.Link>
+                                    : null}
+                                <Nav.Link as={Link} to="/account">Личный кабинет</Nav.Link>
+                            </>
+                            : <Nav.Link as={Link} to="/login">Войти</Nav.Link> }
                     </Nav>
-                    <hr />
                     </Container>
+                    <hr />
                 </Navbar>
             }
         </AuthContextConsumer>
