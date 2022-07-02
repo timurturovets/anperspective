@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 import Home from './components/Home'
 import Post from './components/Post'
 import Edit from './components/Edit'
+import EditPost from './components/EditPost'
 import Login from './components/Authentication/Login'
 import Register from './components/Authentication/Register'
 import AuthRoute from "./components/Authentication/AuthRoute";
@@ -21,6 +22,7 @@ export default class App extends React.Component {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/edit" element={<AuthRoute element={<Edit />} />} />
+            <Route path="/edit/post" element={<AuthRoute element={<EditPost />} />} />
           </Routes>
         </Layout>
     </BrowserRouter>

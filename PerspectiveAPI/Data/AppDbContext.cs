@@ -31,6 +31,9 @@ public sealed class AppDbContext : DbContext
                     AuthorId = "1"
                 }
             );
+        
+        builder.Entity<Post>()
+            .Navigation(p => p.Author).AutoInclude();
     }
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 

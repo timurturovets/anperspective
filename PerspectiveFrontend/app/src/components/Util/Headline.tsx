@@ -4,7 +4,7 @@ import { HeadlineData } from './Feed'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../../styles.css'
 
-interface HeadlineProps {
+export interface HeadlineProps {
     data: HeadlineData
 }
 

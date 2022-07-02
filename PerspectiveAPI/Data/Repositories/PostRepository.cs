@@ -10,7 +10,7 @@ public class PostRepository : RepositoryBase<Post>
     public override void Delete(Post post)
     {
         post.DeleteImage();
-        Context.Entry(post).State = EntityState.Deleted;
+        Context.Posts.Remove(post);
         Context.SaveChanges();
     }
 }

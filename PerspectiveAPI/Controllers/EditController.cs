@@ -21,6 +21,15 @@ public class EditController : ControllerBase
         _userRepo = userRepo;
     }
 
+    [HttpGet("/all")]
+    public IActionResult GetAll()
+    {
+        var posts = _postRepo.GetAll().Select(p=>p.ToInfo()).ToList();
+        if (posts.Count < 1) return NoContent();
+
+        return Ok(posts);
+    }
+    
     [HttpPost("create")]
     public IActionResult CreatePost([FromForm] CreatePostDto dto)
     {
@@ -57,8 +66,23 @@ public class EditController : ControllerBase
     {
         var post = _postRepo.Get(id);
         if (post is null) return NotFound();
-        
+
+        var user = _userRepo.GetByClaims(User);
+        if (user?.Role == UserRole.Editor && post.AuthorId != user.UserId) return Forbid();
+
         _postRepo.Delete(post);
         return Ok();
+    }
+    
+    [HttpGet("/post")]
+    public IActionResult GetPost([FromQuery] string id)
+    {
+        var post = _postRepo.Get(id);
+        if (post is null) return NotFound();
+
+        var user = _userRepo.GetByClaims(User);
+        if (user?.Role == UserRole.Editor && post.AuthorId != user.UserId) return Forbid();
+
+        return Ok(post.ToDto());
     }
 }

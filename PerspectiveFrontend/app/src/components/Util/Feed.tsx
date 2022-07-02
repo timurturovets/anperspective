@@ -4,6 +4,7 @@ import Loading from './Loading'
 import { request } from '../../request'
 
 export interface HeadlineData {
+    postId: string,
     timePosted: string,
     header: string,
     slug: string,

@@ -1,7 +1,7 @@
 ﻿import React, { Component } from 'react'
 import { request } from '../request'
 
-interface PostInfo {
+export interface PostInfo {
     header: string,
     authorName: string,
     rawHtml: string,

@@ -53,7 +53,8 @@ public class RepositoryBase<T> where T: class
     }
     public virtual void Update(T entity)
     {
-        Context.Entry(entity).State = EntityState.Modified;
+        Context.Set<T>().Update(entity);
+        Context.SaveChanges();
     }
     public virtual void Delete(T entity)
     {
