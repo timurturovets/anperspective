@@ -33,16 +33,16 @@ export default class Feed extends Component<any, FeedState> {
         const { isLoading, news } = this.state;
         return isLoading
             ? <Loading withText />
-            : news.map(n=><Headline data={n} /> );
+            : news.map(n => <Headline key={n.postId} data={n} /> );
     }
     
     getPosts = async () => {
         await request('/api/posts/all').then(async response => {
-           if (response.status === 200) {
+           if (response.ok) {
                const result = await response.json();
                this.setState({ isLoading: false, news: result });
            }
-           else alert('Произошла ошибка. Перезайдите на сайт и попробуйте снова');
+           else alert(`Произошла ошибка. Перезайдите на сайт и попробуйте снова. [${response.status}]`);
         });
     }
 }

@@ -1,8 +1,10 @@
 ﻿import React, { Component } from 'react'
 import { request } from '../request'
+import AuthRoute from './Authentication/AuthRoute'
 import Loading from './Util/Loading'
 import EditPostHeadline from "./Util/EditPostHeadline";
 import { HeadlineData } from './Util/Feed'
+import { Link } from 'react-router-dom'
 
 interface EditState {
     isLoading: Boolean,
@@ -27,17 +29,22 @@ export default class Edit extends Component<any, EditState> {
     
     render(){
         const { isLoading, news, message } = this.state;
-        return !isLoading
-            ? <Loading withText />
-            : <>
+        return <AuthRoute>
                 <h1 className="text-center">Редактирование постов</h1>
-                {message
-                    ? <b>{message}</b>
-                    : null}
-                {news.map(n=>
-                    <EditPostHeadline onDelete={this.handleDelete} data={n} />
-                )}
-            </>
+                <Link to="/create">Создать новый пост</Link>
+                {isLoading
+                    ? <Loading withText />
+                    : <>
+                        {message
+                            ? <b>{message}</b>
+                            : null
+                        }
+                        {news.map(
+                        n => <EditPostHeadline key={n.postId} onDelete={this.handleDelete} data={n} />
+                        )}
+                    </>
+                }
+            </AuthRoute>
     }
     
     checkForAuthorization = async () => {

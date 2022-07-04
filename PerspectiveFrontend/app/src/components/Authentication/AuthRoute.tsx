@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom'
 import { AuthContextConsumer } from '../../AuthContext'
 
 interface AuthRouteProps {
-    element: ReactNode
+    children: ReactNode | ReactNode[]
 }
 
 export default class AuthRoute extends Component<AuthRouteProps, any> {
@@ -15,7 +15,7 @@ export default class AuthRoute extends Component<AuthRouteProps, any> {
         return <AuthContextConsumer>
             {({isAuthenticated}) => 
                 isAuthenticated
-                    ? this.props.element
+                    ? this.props.children
                     : <Navigate to="/login" />
             }
         </AuthContextConsumer>
