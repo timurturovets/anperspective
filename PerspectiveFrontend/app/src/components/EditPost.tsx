@@ -2,7 +2,7 @@
 import AuthRoute from './Authentication/AuthRoute'
 import Loading from './Util/Loading'
 import PostHtmlTextarea from "./Util/PostHtmlTextarea";
-import { request } from '../request'
+import request from '../Requests/request'
 import { PostInfo } from './Post'
 
 interface EditPostState {
@@ -73,9 +73,9 @@ export default class EditPost extends Component<any, EditPostState> {
         }
         
         await request(`/api/edit/post?id=${id}`)
-        .then(async response => {
-           if (response.ok) {
-               const post = await response.json();
+        .then(response => {
+           if (response.status === 200) {
+               const post = response.data;
                this.setState({isLoading: false, post: post});
            } else {
                if (response.status === 403) {

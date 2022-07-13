@@ -41,7 +41,7 @@ export default class EditPostHeadline extends Component<EditPostHeadlineProps, E
         e.preventDefault();
         
         const { postId, header } = this.props.data;
-        if(!confirm(`Вы точно хотите удалить пост "${header}"?`)) return;
+        if(!window.confirm(`Вы точно хотите удалить пост "${header}"?`)) return;
         
         this.props.onDelete(postId);
     }

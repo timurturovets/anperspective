@@ -27,7 +27,7 @@ export default class PostHtmlTextarea extends Component<PostHtmlTextareaProps, P
                         : "Просмотреть, как выглядит пост"
                     }
                 </button>
-                <textarea onChange={e=>this.handleChange(e)}>
+                <textarea onChange={e=>this.handleChange(e)} rows={5}>
                     {this.props.value}
                 </textarea>
             </>

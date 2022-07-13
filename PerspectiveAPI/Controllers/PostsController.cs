@@ -32,7 +32,7 @@ public class PostsController : ControllerBase
     [HttpGet("post/{slug}")]
     public IActionResult GetPost([FromRoute] string slug)
     {
-        var post = _postRepo.GetBy(p => p.Slug == slug);
+        var post = _postRepo.GetBy(p => p.Slug != null && p.Slug.StartsWith(slug));
         if (post is null) return NotFound();
         
         return Ok(post.ToDto());

@@ -1,4 +1,5 @@
 import React, { ReactNode, Component } from 'react'
+import { getJWTInfo } from "./Requests/JWTLocalStorage";
 
 const { Provider, Consumer } = React.createContext({
     isAuthenticated: false,
@@ -14,9 +15,10 @@ export class AuthContextProvider extends Component<AuthContextProviderProps, any
     constructor(props: AuthContextProviderProps){
         super(props);
 
+        const info = getJWTInfo();
         this.state = {
-            isAuthenticated: false,
-            role: "Default"
+            isAuthenticated: !!info,
+            role: info?.role || "Default"
         }
     }
 

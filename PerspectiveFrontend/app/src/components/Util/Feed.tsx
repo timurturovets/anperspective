@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import Headline  from './Headline'
 import Loading from './Loading'
-import { request } from '../../request'
+import request from '../../Requests/request'
 
 export interface HeadlineData {
     postId: string,
     timePosted: string,
     header: string,
     slug: string,
-    author: string, 
+    authorName: string, 
     imageLocation: string
 }
 
@@ -37,12 +37,12 @@ export default class Feed extends Component<any, FeedState> {
     }
     
     getPosts = async () => {
-        await request('/api/posts/all').then(async response => {
-           if (response.ok) {
-               const result = await response.json();
+        await request('/api/posts/all').then(response => {
+           if (response.status === 200) {
+               const result = response.data;
                this.setState({ isLoading: false, news: result });
            }
            else alert(`Произошла ошибка. Перезайдите на сайт и попробуйте снова. [${response.status}]`);
-        });
+        }).catch(err=>console.log(err));
     }
 }

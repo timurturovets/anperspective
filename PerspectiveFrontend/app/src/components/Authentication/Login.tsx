@@ -1,60 +1,68 @@
 import React, { Component } from 'react'
-import { Navigate } from 'react-router-dom'
-import { request } from '../../request'
+import { Link } from 'react-router-dom'
+import request  from '../../Requests/request'
+import { setJWTInfo } from "../../Requests/JWTLocalStorage";
+import enableInterceptor from '../../Requests/JWTInterceptor'
 import { AuthContextConsumer } from '../../AuthContext'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 interface LoginPageState {
-    notRegistered: Boolean,
     userNameErrors?: string[],
-    passwordErrors?: string[]
+    passwordErrors?: string[],
+    fromUrl?: string | null
 }
+
 export default class Login extends Component<any, LoginPageState> {
     constructor(props: any){
         super(props);
+
+        const query = new URLSearchParams(window.location.search);
+        const fromUrl = query.get('from');
+        
         this.state = {
-            notRegistered: false,
             userNameErrors: undefined,
-            passwordErrors: undefined
+            passwordErrors: undefined,
+            fromUrl
         };
     }
 
     render() {
-        const { notRegistered, userNameErrors, passwordErrors } = this.state;
+        const { userNameErrors, passwordErrors, fromUrl } = this.state;
+        
+        let registerPageUrl = '/register';
+        if(fromUrl) registerPageUrl += `?from=${fromUrl}`;
+        
         return <AuthContextConsumer>
             {({setStatus}) =>
-                notRegistered
-                    ? <Navigate to="/register"/>
-                    : <div className="m-auto text-center" style={{width: '50%'}}>
-                        <form>
-                            <div className="form-group my-1">
-                                <label>Имя пользователя</label>
-                                {userNameErrors
-                                    ? <span className="text-danger">
-                                        {userNameErrors.map(err=><p>{err}</p>)}
-                                    </span>
-                                    : null}
-                                <input className="form-control" type="text" name="username"/>
-                            </div>
-                            <div className="form-group mb-1">
-                                <label>Пароль</label>
-                                {passwordErrors
-                                    ? <span className="text-danger">
-                                        {passwordErrors.map(err=><p>{err}</p>)}
-                                    </span>
-                                    : null}
-                                <input className="form-control" type="text" name="password"/>
-                            </div>
-                            <button className="btn btn-lg btn-outline-success mb-1"
-                                    onClick={e => this.handleSubmit(e, setStatus)}>
-                                Войти
-                            </button><br />
-                            <button className="btn btn-sm btn-outline-primary"
-                                    onClick={e => this.setState({notRegistered: true})}>
-                                Нет аккаунта?
-                            </button>
-                        </form>
-                    </div>
+                <div className="m-auto text-center" style={{width: '50%'}}>
+                    <form>
+                        <div className="form-group my-1">
+                            <label>Имя пользователя</label>
+                            {userNameErrors
+                                ? <span className="text-danger">
+                                    {userNameErrors.map(err=><p>{err}</p>)}
+                                </span>
+                                : null}
+                            <input className="form-control" type="text" name="username"/>
+                        </div>
+                        <div className="form-group mb-1">
+                            <label>Пароль</label>
+                            {passwordErrors
+                                ? <span className="text-danger">
+                                    {passwordErrors.map(err=><p>{err}</p>)}
+                                </span>
+                                : null}
+                            <input className="form-control" type="text" name="password"/>
+                        </div>
+                        <button className="btn btn-lg btn-outline-success mb-1"
+                                onClick={e => this.handleSubmit(e, setStatus)}>
+                            Войти
+                        </button><br />
+                        <Link to={registerPageUrl} className="btn btn-sm btn-outline-primary">
+                            Нет аккаунта?
+                        </Link>
+                    </form>
+                </div>
             }
             </AuthContextConsumer>
     }
@@ -71,19 +79,21 @@ export default class Login extends Component<any, LoginPageState> {
         await request('/api/auth/login', {
             method: 'POST',
             body: formData
-        }).then(async response => {
-            const result = await response.json();
+        }).then(response => {
+            const result = response.data;
             
             if(response.status === 200) {
-                const token: string = result.token;
-                const expirationTime: number = result.expirationTime;
-                let now = new Date();
-                now.setTime(now.getTime() + expirationTime * 1000);
-                const expires = "expires=" + now.toUTCString();
-                document.cookie = "token=" + token + ";" + expires + "; path=/";
+                const token = result.token,
+                      expires = result.tokenLifeSpan,
+                      role = result.role;
                 
-                const role = result.role;
                 setStatus(true, role);
+                enableInterceptor(token);
+                setJWTInfo({token, expires, role});
+                
+                const { fromUrl } = this.state;
+                if (!fromUrl) return;
+                window.location.href = fromUrl;
             }
             
             if (response.status === 400) {

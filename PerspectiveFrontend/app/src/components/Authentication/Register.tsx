@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { Navigate } from 'react-router-dom'
-import { request } from '../../request'
+import { Link } from 'react-router-dom'
+import request from '../../Requests/request'
 import { AuthContextConsumer } from '../../AuthContext'
+import enableInterceptor from "../../Requests/JWTInterceptor";
+import {setJWTInfo} from "../../Requests/JWTLocalStorage";
 
 interface RegisterPageState{
-    alreadyRegistered: Boolean,
     userNameErrors?: string[],
     passwordErrors?: string[]
 }
@@ -13,52 +14,48 @@ export default class Register extends Component<any, RegisterPageState> {
         super(props);
 
         this.state = {
-            alreadyRegistered: false,
             userNameErrors: undefined,
             passwordErrors: undefined
         };
     }
 
     render() {
-        const { alreadyRegistered, userNameErrors, passwordErrors } = this.state;
+        const { userNameErrors, passwordErrors } = this.state;
         return <AuthContextConsumer>
             {({setStatus}) =>
-                alreadyRegistered
-                ? <Navigate to="/login" />
-                : <div className="m-auto text-center" style={{width: '50%'}}>
-                        <form>
-                            <div className="form-group my-1">
-                                <label>Имя пользователя</label>
-                                {userNameErrors
-                                    ? <span className="text-danger">
-                                        {userNameErrors.map(err=><p>{err}</p>)}
-                                    </span>
-                                    : null}
-                                <input className="form-control" type="text" name="username"/>
-                            </div>
-                            <div className="form-group mb-1">
-                                <label>Пароль</label>
-                                {passwordErrors
-                                    ? <span className="text-danger">
-                                        {passwordErrors.map(err=><p>{err}</p>)}
-                                    </span>
-                                    : null}
-                                <input className="form-control" type="text" name="password"/>
-                            </div>
-                            <div className="form-group mb-1">
-                                <label>Подтвердите пароль</label>
-                                <input className="form-control" type="text" name="passwordconfirmation"/>
-                            </div>
-                            <button className="btn btn-lg btn-outline-success mb-1"
-                                    onClick={e => this.handleSubmit(e, setStatus)}>
-                                Зарегистрироваться
-                            </button><br />
-                            <button className="btn btn-sm btn-outline-primary"
-                                    onClick={e => this.setState({alreadyRegistered: true})}>
-                                Уже зарегистрированы??
-                            </button>
-                        </form>
-                    </div>
+                <div className="m-auto text-center" style={{width: '50%'}}>
+                    <form>
+                        <div className="form-group my-1">
+                            <label>Имя пользователя</label>
+                            {userNameErrors
+                                ? <span className="text-danger">
+                                    {userNameErrors.map(err=><p>{err}</p>)}
+                                </span>
+                                : null}
+                            <input className="form-control" type="text" name="username"/>
+                        </div>
+                        <div className="form-group mb-1">
+                            <label>Пароль</label>
+                            {passwordErrors
+                                ? <span className="text-danger">
+                                    {passwordErrors.map(err=><p>{err}</p>)}
+                                </span>
+                                : null}
+                            <input className="form-control" type="text" name="password"/>
+                        </div>
+                        <div className="form-group mb-1">
+                            <label>Подтвердите пароль</label>
+                            <input className="form-control" type="text" name="passwordconfirmation"/>
+                        </div>
+                        <button className="btn btn-lg btn-outline-success mb-1"
+                                onClick={e => this.handleSubmit(e, setStatus)}>
+                            Зарегистрироваться
+                        </button><br />
+                        <Link to="/login" className="btn btn-sm btn-outline-primary">
+                            Уже есть аккаунт?
+                        </Link>
+                    </form>
+                </div>
             }
         </AuthContextConsumer>
     }
@@ -75,19 +72,23 @@ export default class Register extends Component<any, RegisterPageState> {
         await request('/api/auth/register', {
             method: 'POST',
             body: formData
-        }).then(async response => {
-            const result = await response.json();
+        }).then(response => {
+            const result = response.data;
+            
             if(response.status === 200) {
-                const token: string = result.token;
-                const expirationTime: number = result.expirationTime;
-                let now = new Date();
-                now.setTime(now.getTime() + expirationTime * 1000);
-                const expires = "expires=" + now.toUTCString();
-                document.cookie = "token=" + token + ";" + expires + "; path=/";
-                
+                const token = result.token;
+                const expires = result.tokenLifeSpan;
                 const role = result.role;
+
                 setStatus(true, role);
+                enableInterceptor(token);
+                setJWTInfo({token, expires, role});
+
+                const query = new URLSearchParams(window.location.search);
+                if (!query.has('from')) return;
+                window.location.href = query.get('from') as string;
             }
+            
             if (response.status === 400) {
                 const errors = result.errors;
                 this.setState({

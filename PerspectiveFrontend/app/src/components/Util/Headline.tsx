@@ -14,7 +14,7 @@ export default class Headline extends Component<HeadlineProps, any> {
     }
     
     render() {
-        const { timePosted, author, header, slug, imageLocation } = this.props.data;
+        const { timePosted, authorName, header, slug, imageLocation } = this.props.data;
         
         const url = `${process.env.REACT_APP_API_URL}/${imageLocation}`;
         
@@ -24,7 +24,7 @@ export default class Headline extends Component<HeadlineProps, any> {
                     <img src={url} alt="" style={{height: "100%"}} />
                     <div className="d-flex flex-column">
                         <h3>{header}</h3>
-                        <h5>Опубликовал {author} {timePosted}</h5>
+                        <h5>Опубликовал {authorName} {timePosted}</h5>
                     </div>
                 </div>
                 </Link>

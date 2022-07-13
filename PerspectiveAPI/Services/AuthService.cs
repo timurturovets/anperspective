@@ -12,66 +12,62 @@ namespace PerspectiveAPI.Services;
 public class AuthService
 {
     private readonly string _issuer;
-    private readonly int _jwtLifeSpan;
-    private readonly byte[] _key;
-    public AuthService(string issuer, string jwtSecret, int jwtLifeSpan)
+    private readonly string _audience;
+    private readonly string _secret;
+    public AuthService(string issuer, string audience, string jwtSecret)
     {
         _issuer = issuer;
-        _jwtLifeSpan = jwtLifeSpan;
-        _key = Encoding.UTF8.GetBytes(jwtSecret);
+        _secret = jwtSecret;
+        _audience = audience;
     }
 
     public JwtInfo GetJwtInfo(User user)
     {
-        var expirationTime = DateTime.Now.AddSeconds(_jwtLifeSpan);
-
-        Claim[] claims =
-        {
-            new(ClaimTypes.Name, user.UserName!),
-            new(ClaimTypes.Role, $"{user.Role}")
-        };
-        
-        var securityKey = new SymmetricSecurityKey(_key);
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-        
-        var tokenDescriptor = new JwtSecurityToken(
-            issuer: _issuer,
-            claims: claims,
-            expires: expirationTime,
-            signingCredentials: credentials
-        );
-
-        var handler = new JwtSecurityTokenHandler();
-        var token = handler.WriteToken(tokenDescriptor);
+        var token = GenerateJwt(user);
         
         return new JwtInfo
         {
             UserId = user.UserId,
             Token = token,
-            TokenLifeSpan = ((DateTimeOffset) expirationTime).ToUnixTimeSeconds(),
+            TokenLifeSpan = 3600,
             Role = user.GetRole()
         };
     }
 
-    public bool ValidateToken(string token)
+    public JwtSecurityToken? ValidateToken(string token)
     {
-        var key = new SymmetricSecurityKey(_key);
-        var handler = new JwtSecurityTokenHandler();
-        try
+        var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+        if (jwtSecurityTokenHandler.ReadToken(token) is not JwtSecurityToken) return null;
+        var key = Convert.FromBase64String(_secret);
+        var parameters = new TokenValidationParameters
         {
-            handler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = _issuer,
-                IssuerSigningKey = key
-            }, out _);
-        }
-        catch
-        {
-            return false;
-        }
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            RequireExpirationTime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+        jwtSecurityTokenHandler.ValidateToken(token, parameters, out var securityToken);
+        return securityToken as JwtSecurityToken;
+    }
 
-        return true;
+    private string GenerateJwt(User user)
+    {
+        var key = Convert.FromBase64String(_secret);
+        var symmetricSecurityKey = new SymmetricSecurityKey(key);
+        var securityTokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new Claim[]
+            {
+                new(ClaimTypes.Name, user.UserName!),
+                new(ClaimTypes.Role, user.GetRole())
+            }),
+            Expires = DateTime.UtcNow.AddHours(2),
+            SigningCredentials = new SigningCredentials(symmetricSecurityKey, 
+                SecurityAlgorithms.HmacSha256Signature)
+        };
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.CreateJwtSecurityToken(securityTokenDescriptor);
+        return handler.WriteToken(token);
     }
 }

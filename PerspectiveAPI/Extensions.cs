@@ -6,12 +6,6 @@ namespace PerspectiveAPI;
 
 public static class Extensions
 {
-    public static IApplicationBuilder UseAuthMiddleware(this IApplicationBuilder app)
-    {
-        app.UseMiddleware<AuthMiddleware>();
-        return app;
-    }
-
     public static string Slugify(this string text)
     {
         if (text.Length < 1) return string.Empty;
@@ -30,4 +24,7 @@ public static class Extensions
 
         return slug;
     }
+
+    public static ILogger<T> L<T>(this HttpContext context)
+        => context.RequestServices.GetRequiredService<ILogger<T>>();
 }

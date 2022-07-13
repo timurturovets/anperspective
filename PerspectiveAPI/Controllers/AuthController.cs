@@ -51,16 +51,13 @@ public class AuthController : ControllerBase
         if (!user.CheckIfPasswordCorrect(dto.Password)) return BadRequest();
 
         var jwtInfo = _authService.GetJwtInfo(user);
+        var l = HttpContext.RequestServices.GetRequiredService<ILogger<AuthController>>();
+        l.LogCritical($"Response token: {jwtInfo.Token}");
+        l.LogCritical($"Response role:  {jwtInfo.Role}");
+        l.LogCritical($"Response token lifespan: {jwtInfo.TokenLifeSpan}");
+        l.LogCritical($"Response UserId:{jwtInfo.UserId}");
+
+
         return Ok(jwtInfo);
-    }
-
-    [Authorize]
-    [HttpPost("get-role")]
-    public IActionResult GetRole()
-    {
-        var user = _userRepo.GetByClaims(User);
-        if (user is null) return Conflict();
-
-        return Ok(user.GetRole());
     }
 }

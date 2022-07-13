@@ -25,7 +25,6 @@ export default class NavigationHeader extends Component {
                         </Navbar.Brand>
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/about">Об агентстве</Nav.Link>
-                        <Nav.Link as={Link} to="/login">Личный кабинет</Nav.Link>
                         {isAuthenticated 
                             ? <>
                                 { role.toLowerCase() === "editor" || role.toLowerCase() === "admin"

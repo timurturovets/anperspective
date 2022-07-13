@@ -1,5 +1,5 @@
 ﻿import React, { Component } from 'react'
-import { request } from '../request'
+import request from '../Requests/request'
 import AuthRoute from './Authentication/AuthRoute'
 import Loading from './Util/Loading'
 import EditPostHeadline from "./Util/EditPostHeadline";
@@ -24,14 +24,14 @@ export default class Edit extends Component<any, EditState> {
     }
     
     componentDidMount() {
-        this.checkForAuthorization();
+        this.getPosts();
     }
     
     render(){
         const { isLoading, news, message } = this.state;
-        return <AuthRoute>
+        return <AuthRoute roles={["editor", "admin"]}>
                 <h1 className="text-center">Редактирование постов</h1>
-                <Link to="/create">Создать новый пост</Link>
+                <Link to="/create" className="btn btn-success">Создать новый пост</Link><br />
                 {isLoading
                     ? <Loading withText />
                     : <>
@@ -47,27 +47,10 @@ export default class Edit extends Component<any, EditState> {
             </AuthRoute>
     }
     
-    checkForAuthorization = async () => {
-        await request('/api/auth/get-role').then(async response => {
-            if(response.status === 401 || response.status === 409) {
-                window.location.href = "/";
-                return;
-            }
-            
-            const role = (await response.json()).toLowerCase();
-            if(role !== "admin" && role !== "editor") {
-                window.location.href = "/";
-                return;
-            }
-           
-            this.getPosts();
-        });
-    }
-    
     getPosts = async () => {
-        await request('/api/edit/all').then(async response => {
-            if (response.ok) {
-                const news = await response.json();
+        await request('/api/edit/all').then(response => {
+            if (response.status === 200) {
+                const news = response.data;
                 this.setState({isLoading: false, news: news});
             } else {
                 this.setState({
@@ -82,7 +65,7 @@ export default class Edit extends Component<any, EditState> {
         await request(`/api/edit/delete/${id}`, {
             method: 'DELETE'
         }).then(response => {
-            if (response.ok) {
+            if (response.status === 200) {
                 let { news } = this.state;
                 const deletedPost = news.find(n=> n.postId === id) as HeadlineData;
                 

@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using PerspectiveAPI.Models.DTO;
 using PerspectiveAPI.Models.Domain;
 using PerspectiveAPI.Data.Repositories;
+using PerspectiveAPI.Services;
 
 namespace PerspectiveAPI.Controllers;
 
-[Authorize(Roles="1,2")]
+[AuthRequired("Editor,Admin")]
 [ApiController]
 [Route("api/[controller]")]
 public class EditController : ControllerBase
@@ -21,7 +22,7 @@ public class EditController : ControllerBase
         _userRepo = userRepo;
     }
 
-    [HttpGet("/all")]
+    [HttpGet("all")]
     public IActionResult GetAll()
     {
         var posts = _postRepo.GetAll().Select(p=>p.ToInfo()).ToList();

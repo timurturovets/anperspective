@@ -20,7 +20,8 @@ export default class Loading extends Component<LoadingProps, LoadingState> {
     
     componentDidMount() {
         const id = setInterval(()=>{
-            const { angle } = this.state;
+            let { angle } = this.state;
+            if(angle === 350) angle = -10;
             this.setState({angle: angle+10});
         }, 50);
         this.setState({intervalId: id})

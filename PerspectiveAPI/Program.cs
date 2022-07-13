@@ -1,5 +1,5 @@
 using System.Text;
-
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,28 +23,29 @@ services.AddDbContext<AppDbContext>(options =>
 services.AddControllers();
 
 var section = config.GetSection("jwtSettings");
+string issuer = section.GetValue<string>("issuer"),
+    audience = section.GetValue<string>("audience"),
+    secret = section.GetValue<string>("jwtSecret");
 
-services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
-    options =>
+/*services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = section.GetValue<string>("issuer"),
-            IssuerSigningKey = new SymmetricSecurityKey
-                (Encoding.UTF8.GetBytes(section.GetValue<string>("jwtSecret")))
-        };
-    }
-);
-
-var issuer = section.GetValue<string>("issuer");
-var secret = section.GetValue<string>("jwtSecret");
-var lifeSpan = section.GetValue<int>("jwtLifeSpan");
-
-var authServiceSingleton = new AuthService(issuer,secret, lifeSpan);
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = false,
+        ValidateIssuerSigningKey = false,
+        ValidIssuer = issuer,
+        ValidAudience = audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret))
+    };
+});*/
+var authServiceSingleton = new AuthService(issuer, audience, secret);
 services.AddSingleton(authServiceSingleton);
 
 services.AddTransient<PostRepository>();
@@ -58,10 +59,22 @@ app.UseCors(options =>
 });
 app.UseHttpsRedirection();
 
-app.UseAuthMiddleware();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseMiddleware<AuthMiddleware>();
+app.UseMiddleware<Pogware>();
 app.MapControllers();
-
 app.Run();
+
+class Pogware
+{
+    private readonly RequestDelegate n;
+    public Pogware(RequestDelegate nn) => n = nn;
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var l = context.L<Pogware>();
+        l.LogCritical($"Route: {context.Request.Path}");
+        await n(context);
+    }
+}
