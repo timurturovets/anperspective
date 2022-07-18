@@ -1,8 +1,4 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using PerspectiveAPI;
 using PerspectiveAPI.Data;
@@ -27,24 +23,6 @@ string issuer = section.GetValue<string>("issuer"),
     audience = section.GetValue<string>("audience"),
     secret = section.GetValue<string>("jwtSecret");
 
-/*services.AddAuthentication(option =>
-{
-    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = false,
-        ValidateIssuerSigningKey = false,
-        ValidIssuer = issuer,
-        ValidAudience = audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret))
-    };
-});*/
 var authServiceSingleton = new AuthService(issuer, audience, secret);
 services.AddSingleton(authServiceSingleton);
 
@@ -59,22 +37,6 @@ app.UseCors(options =>
 });
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseMiddleware<AuthMiddleware>();
-app.UseMiddleware<Pogware>();
+app.UseAuthMiddleware();
 app.MapControllers();
 app.Run();
-
-class Pogware
-{
-    private readonly RequestDelegate n;
-    public Pogware(RequestDelegate nn) => n = nn;
-
-    public async Task InvokeAsync(HttpContext context)
-    {
-        var l = context.L<Pogware>();
-        l.LogCritical($"Route: {context.Request.Path}");
-        await n(context);
-    }
-}

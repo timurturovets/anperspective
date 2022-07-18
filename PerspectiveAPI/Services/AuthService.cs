@@ -47,8 +47,15 @@ public class AuthService
             RequireExpirationTime = true,
             IssuerSigningKey = new SymmetricSecurityKey(key)
         };
-        jwtSecurityTokenHandler.ValidateToken(token, parameters, out var securityToken);
-        return securityToken as JwtSecurityToken;
+        try
+        {
+            jwtSecurityTokenHandler.ValidateToken(token, parameters, out var securityToken);
+            return securityToken as JwtSecurityToken;
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private string GenerateJwt(User user)

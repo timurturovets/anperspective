@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using PerspectiveAPI.Services;
 
 namespace PerspectiveAPI;
 
@@ -27,4 +28,9 @@ public static class Extensions
 
     public static ILogger<T> L<T>(this HttpContext context)
         => context.RequestServices.GetRequiredService<ILogger<T>>();
+
+    public static void UseAuthMiddleware(this WebApplication app)
+    {
+        app.UseMiddleware<AuthMiddleware>();
+    }
 }

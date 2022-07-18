@@ -8,7 +8,7 @@ using PerspectiveAPI.Services;
 
 namespace PerspectiveAPI.Controllers;
 
-[AuthRequired("Editor,Admin")]
+[AuthRequired("Editor")]
 [ApiController]
 [Route("api/[controller]")]
 public class EditController : ControllerBase

@@ -19,10 +19,13 @@ public class AuthRequiredAttribute : Attribute, IAuthorizationFilter
         var l = context.HttpContext.RequestServices.GetRequiredService<ILogger<AuthRequiredAttribute>>();
         if (context.HttpContext.Items["User"] is ClaimsPrincipal user)
         {
+        
             if(_roles is null) return;
-            var userRole = user.Claims.FirstOrDefault(c => c.Type == "role")?.Value.ToLower();
-            var userName = user.Claims.FirstOrDefault(c => c.Type == "name")?.Value.ToLower();
-            l.LogError($"From mw role: {userRole}, name: {userName}");
+            var userRole = user.Claims
+                .FirstOrDefault(c => c.Type == "role")
+                ?.Value
+                .ToLower();
+            
             if (_roles.Contains(userRole)) return;
         }
 
