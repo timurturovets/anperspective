@@ -8,12 +8,17 @@ public class Post
     public string? PostId { get; set; }
 
     public DateTime TimePosted { get; set; }
-    public string? Header { get; set; }
-    public string? Slug
+    private string? _header;
+    public string? Header
     {
-        get => Header?.Slugify();
-        set {  }
+        get => _header;
+        set
+        {
+            _header = value;
+            Slug = value?.Slugify();
+        } 
     }
+    public string? Slug { get; private set; }
     public string? RawHtml { get; set; }
     public string? ImageLocation { get; set; }
     public string? ImagePhysicalPath { get; set; }
