@@ -1,40 +1,30 @@
 ﻿import React, { Component } from 'react'
-import { Navigate } from 'react-router-dom'
-import Headline from './Feed'
+import { Link } from 'react-router-dom'
 import { HeadlineProps } from './Headline'
 
 interface EditPostHeadlineProps extends HeadlineProps {
     onDelete: (id: string) => void
 }
 
-interface EditPostHeadlineState {
-    clickedEditing: Boolean
-}
-
-export default class EditPostHeadline extends Component<EditPostHeadlineProps, EditPostHeadlineState> { 
+export default class EditPostHeadline extends Component<EditPostHeadlineProps, any> { 
     constructor(props: EditPostHeadlineProps){
         super(props);
-        
-        this.state = {
-            clickedEditing: false
-        };
     }
     
     render() {
+        const { header } = this.props.data;
         const { postId } = this.props.data;
-        return this.state.clickedEditing
-                ? <Navigate to={`/edit/post?id=${postId}`}/>
-                : <div className="d-flex flex-row">
-                     <Headline data={this.props.data} />
-                     <div className="btn-toolbar">
-                         <div className="btn-group">
-                             <button className="btn btn-large btn-outline-primary"
-                                 onClick={e=>this.setState({clickedEditing: true})}>Редактировать</button>
-                             <button className="btn btn-large btn-outline-danger"
-                                 onClick={e=>this.handleDeleting(e)}>Удалить</button>
-                         </div>
+        return <div className="d-flex flex-row">
+                 <h3>{header}</h3>
+                 <div className="btn-toolbar mr-3">
+                     <div className="btn-group">
+                         <Link to={`/edit/post?id=${postId}`} 
+                               className="btn btn-large btn-outline-primary">Редактировать</Link>
+                         <button className="btn btn-large btn-outline-danger"
+                             onClick={e=>this.handleDeleting(e)}>Удалить</button>
                      </div>
                  </div>
+             </div>
     }
     
     handleDeleting = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

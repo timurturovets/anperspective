@@ -36,7 +36,7 @@ app.UseCors(options =>
     options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
 });
 app.UseHttpsRedirection();
-
+app.UseRequestsLogger();
 app.UseAuthMiddleware();
 app.MapControllers();
 app.Run();

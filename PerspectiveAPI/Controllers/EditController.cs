@@ -8,7 +8,7 @@ using PerspectiveAPI.Services;
 
 namespace PerspectiveAPI.Controllers;
 
-[AuthRequired("Editor")]
+[AuthRequired("Editor,Admin")]
 [ApiController]
 [Route("api/[controller]")]
 public class EditController : ControllerBase
@@ -41,7 +41,8 @@ public class EditController : ControllerBase
             Author = creator,
             TimePosted = DateTime.UtcNow
         };
-        post.SetImage(dto.Image!);
+        var env = HttpContext.GetEnvironment();
+        post.SetImage(dto.Image!, env);
         
         _postRepo.Add(post);
         return Ok(post.PostId);
@@ -75,7 +76,7 @@ public class EditController : ControllerBase
         return Ok();
     }
     
-    [HttpGet("/post")]
+    [HttpGet("post")]
     public IActionResult GetPost([FromQuery] string id)
     {
         var post = _postRepo.Get(id);

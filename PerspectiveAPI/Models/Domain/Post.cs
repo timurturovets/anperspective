@@ -1,14 +1,18 @@
-﻿using PerspectiveAPI.Models.DTO;
+﻿using Microsoft.EntityFrameworkCore;
+
+using PerspectiveAPI.Models.DTO;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace PerspectiveAPI.Models.Domain;
 
 public class Post
 {
-    public string? PostId { get; set; }
+    public string PostId { get; set; } = Guid.NewGuid().ToString();
 
     public DateTime TimePosted { get; set; }
+    
     private string? _header;
+    [BackingField(nameof(_header))]
     public string? Header
     {
         get => _header;
@@ -18,7 +22,7 @@ public class Post
             Slug = value?.Slugify();
         } 
     }
-    public string? Slug { get; private set; }
+    public string? Slug { get; set; }
     public string? RawHtml { get; set; }
     public string? ImageLocation { get; set; }
     public string? ImagePhysicalPath { get; set; }
@@ -70,14 +74,16 @@ public class Post
             await image.CopyToAsync(stream);
             return;
         }
-    
+        
+        if(env is null) return;
+        
         var fileRoute = Guid.NewGuid().ToString()[..7] + image.FileName;
 
         var imageLocation = $"/images/posts/{fileRoute}";
 
         var pathToImage = Path.Combine(
-            env!.WebRootPath,
-            "images",
+            env.WebRootPath,
+            "img",
             "posts",
             imageLocation
         );

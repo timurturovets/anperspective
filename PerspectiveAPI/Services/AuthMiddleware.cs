@@ -21,10 +21,6 @@ public class AuthMiddleware
             if (validatedToken is not null)
             {
                 var claims = validatedToken.Claims;
-                foreach (var claim in claims)
-                {
-                    context.L<AuthMiddleware>().LogCritical($"Claim: {claim.Type} {claim.Value}");
-                }
                 var identity = new ClaimsIdentity(claims);
                 context.Items["User"] = new ClaimsPrincipal(identity);
             }

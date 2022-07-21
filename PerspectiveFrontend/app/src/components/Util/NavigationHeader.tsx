@@ -12,6 +12,7 @@ export default class NavigationHeader extends Component {
     }
 
     render() {
+        let from = `?from=${window.location.href}`;
         return <AuthContextConsumer>
             {({isAuthenticated, role}) =>
                 <Navbar>
@@ -32,7 +33,7 @@ export default class NavigationHeader extends Component {
                                     : null}
                                 <Nav.Link as={Link} to="/account">Личный кабинет</Nav.Link>
                             </>
-                            : <Nav.Link as={Link} to="/login">Войти</Nav.Link> }
+                            : <Nav.Link as={Link} to={`/login${from}`}>Войти</Nav.Link> }
                     </Nav>
                     </Container>
                     <hr />

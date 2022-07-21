@@ -51,6 +51,7 @@ export default class Edit extends Component<any, EditState> {
         await request('/api/edit/all').then(response => {
             if (response.status === 200) {
                 const news = response.data;
+                console.log(news);
                 this.setState({isLoading: false, news: news});
             } else {
                 this.setState({

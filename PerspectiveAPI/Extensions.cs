@@ -42,8 +42,12 @@ public static class Extensions
     public static ILogger<T> L<T>(this HttpContext context)
         => context.RequestServices.GetRequiredService<ILogger<T>>();
 
+    public static IWebHostEnvironment GetEnvironment(this HttpContext context)
+        => context.RequestServices.GetRequiredService<IWebHostEnvironment>();
     public static void UseAuthMiddleware(this WebApplication app)
-    {
-        app.UseMiddleware<AuthMiddleware>();
-    }
+        => app.UseMiddleware<AuthMiddleware>();
+
+    public static void UseRequestsLogger(this WebApplication app)
+        => app.UseMiddleware<RequestLoggingMiddleware>();
+
 }

@@ -1,4 +1,5 @@
 ﻿import React, { Component } from 'react'
+import { Editor, EditorState, ContentState } from 'draft-js'
 
 interface PostHtmlTextareaProps {
     value?: string
@@ -6,37 +7,34 @@ interface PostHtmlTextareaProps {
 }
 
 interface PostHtmlTextareaState {
-    isCheckingView: Boolean
+    editorState: EditorState
 }
 export default class PostHtmlTextarea extends Component<PostHtmlTextareaProps, PostHtmlTextareaState> {
     constructor(props: PostHtmlTextareaProps){
         super(props);
         
+        const { value } = props;
+        
+        const editorState: EditorState = value
+            ? EditorState.createWithContent(ContentState.createFromText(value))
+            : EditorState.createEmpty();
+        
         this.state = {
-            isCheckingView: false
+            editorState
         };
     }
     
     render() {
-        const { isCheckingView } = this.state;
+        const { editorState } = this.state;
         return <>
-                <button className="btn btn-outline-primary"
-                    onClick={e=>this.setState({isCheckingView: !isCheckingView})}>
-                    {isCheckingView
-                        ? "Вернуться к редактированию"
-                        : "Просмотреть, как выглядит пост"
-                    }
-                </button>
-                <textarea onChange={e=>this.handleChange(e)} rows={5}>
-                    {this.props.value}
-                </textarea>
+                <Editor editorState={editorState} onChange={this.handleChange} />
             </>
     }
     
-    handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        e.preventDefault();
+    handleChange = (e: EditorState) => {
         
-        const value = e.target.value;
-        this.props.onChange(value);
+        const value = e.getCurrentContent().getAllEntities();
+        let a = value.get('');
+        this.props.onChange("value");
     }
 }
