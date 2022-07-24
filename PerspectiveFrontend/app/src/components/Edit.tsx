@@ -49,38 +49,35 @@ export default class Edit extends Component<any, EditState> {
     
     getPosts = async () => {
         await request('/api/edit/all').then(response => {
-            if (response.status === 200) {
                 const news = response.data;
                 console.log(news);
                 this.setState({isLoading: false, news: news});
-            } else {
-                this.setState({
-                    isLoading: false, 
-                    message: `Произошла ошибка при попытке загрузить посты. [${response.status}]`
-                });
-            }
-        })
+        }).catch(err=>{
+            console.log(err);
+            this.setState({
+                isLoading: false,
+                message: `Произошла ошибка при попытке загрузить посты. [${err.message}]`
+            });
+        });
     }
     
     handleDelete = async (id: string) => {
         await request(`/api/edit/delete/${id}`, {
             method: 'DELETE'
         }).then(response => {
-            if (response.status === 200) {
-                let { news } = this.state;
-                const deletedPost = news.find(n=> n.postId === id) as HeadlineData;
-                
-                news = news.splice(news.indexOf(deletedPost), 1);
-                
-                this.setState({
-                    news: news, 
-                    message: `Пост "${deletedPost.header}" был успешно удалён.`
-                });
-            } else {
-                let msg = `Произошла ошибка при попытке удалить пост. Попробуйте снова. [${response.status}]`;
-                if (response.status === 403) msg = `Вы не имеете прав для удаления этого поста.`
-                this.setState({message: msg});
-            } 
-        })
+            let { news } = this.state;
+            const deletedPost = news.find(n=> n.postId === id) as HeadlineData;
+            
+            news = news.splice(news.indexOf(deletedPost), 1);
+            
+            this.setState({
+                news: news, 
+                message: `Пост "${deletedPost.header}" был успешно удалён.`
+            });
+        }).catch(err => {
+            let msg = `Произошла ошибка при попытке удалить пост. Попробуйте снова. [${err.message}]`;
+            if (err.status === 403) msg = `Вы не имеете прав для удаления этого поста.`
+            this.setState({message: msg});
+        });
     }
 }

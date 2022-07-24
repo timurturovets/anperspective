@@ -1,7 +1,8 @@
 ﻿import React, { Component } from 'react'
 import AuthRoute from './Authentication/AuthRoute'
 import Loading from './Util/Loading'
-import PostHtmlTextarea from "./Util/PostHtmlTextarea";
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css';
 import request from '../Requests/request'
 import { PostInfo } from './Post'
 
@@ -11,7 +12,11 @@ interface EditPostState {
     isSaved: Boolean
     message?: string
 }
+
 export default class EditPost extends Component<any, EditPostState> {
+    static formats: string[] = [
+        
+    ];
     constructor(props: any){
         super(props);
         
@@ -43,16 +48,29 @@ export default class EditPost extends Component<any, EditPostState> {
                     }
                     <form>
                     <span className="text-center">
-                        <input className="form-control form-control-lg" defaultValue={post?.header}
+                        <p>Заголовок</p>
+                        <input className="form-control form-control-lg mb-3" defaultValue={post?.header}
                                onChange={e=>this.handleHeaderUpdate(e)} />
                     </span>
-                        <PostHtmlTextarea value={post?.rawHtml} 
-                          onChange={v=>this.setState({post:{...post, rawHtml: v} as PostInfo})} />
+                        <ReactQuill value={post?.rawHtml}
+                            onChange={this.handleChange}/>
+                        <button className="btn btn-lg btn-outline-success" onClick={this.handleSave}>
+                            Сохранить
+                        </button>
                     </form>
                 </>}
         </AuthRoute>
     }
     
+    handleChange = (value: string) => {
+        console.log(value);
+        this.setState({
+            post: {
+                ...this.state.post,
+                rawHtml: value
+            } as PostInfo
+        });
+    }
     handleHeaderUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         
@@ -61,6 +79,11 @@ export default class EditPost extends Component<any, EditPostState> {
             ...this.state.post,
                 header: e.target.value
             } as PostInfo})
+    }
+    
+    handleSave = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+        //Todo
     }
     
     getPost = async () => {

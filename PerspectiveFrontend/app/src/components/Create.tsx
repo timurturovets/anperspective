@@ -1,4 +1,5 @@
 ﻿import React, { Component } from 'react'
+import { Navigate } from 'react-router-dom'
 import AuthRoute from './Authentication/AuthRoute'
 import request from '../Requests/request'
 
@@ -21,15 +22,23 @@ export default class Create extends Component<any, CreateState> {
     }
     
     render() {
+        const { submitted, success, postId, errors } = this.state;
         return <AuthRoute roles={["editor", "admin"]}>
-            <form>
-                <h1 className="text-center">Создание поста</h1>
-                <input type="text" className="form-control" placeholder="Заголовок" name="header" />
-                <label>Выберите картинку-описание</label>
-                <input type="file" className="form-control" name="image" />
-                <input type="submit" className="btn btn-lg btn-outline-primary"
-                    onClick={e=>this.handleCreate(e)} value="Создать пост" />
-            </form>
+            {submitted
+                ? success
+                    ? <Navigate to={`/edit/post?id=${postId}`} />
+                    : <span className="text-danger">
+                        {errors.map(err=><b>{err}</b>)}
+                      </span>
+                : <form>
+                    <h1 className="text-center">Создание поста</h1>
+                    <input type="text" className="form-control" placeholder="Заголовок" name="header" />
+                    <label>Выберите картинку-описание</label>
+                    <input type="file" className="form-control" name="image" />
+                    <input type="submit" className="btn btn-lg btn-outline-primary"
+                           onClick={e => this.handleCreate(e)} value="Создать пост" />
+                </form>
+            }
         </AuthRoute>
     }
     
