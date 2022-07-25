@@ -17,6 +17,7 @@ export default class App extends React.Component {
   componentDidMount() {
     const token = getJWTInfo()?.token
     if(token) enableInterceptor(token);
+    console.log(`app's componentDidMount, token: ${token}`);
   }
   
   render(){

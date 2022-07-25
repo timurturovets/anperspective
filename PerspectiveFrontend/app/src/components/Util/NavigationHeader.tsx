@@ -12,7 +12,7 @@ export default class NavigationHeader extends Component {
     }
 
     render() {
-        let from = `?from=${window.location.href}`;
+        let from = `?from=${window.location.pathname}`;
         return <AuthContextConsumer>
             {({isAuthenticated, role}) =>
                 <Navbar>

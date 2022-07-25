@@ -14,9 +14,9 @@ public class RepositoryBase<T> where T: class
         return Context.Set<T>().AsNoTracking();
     }
 
-    public T? Get(string id)
+    public T? Get(string? id)
     {
-        return Context.Find<T>(id);
+        return id is null ? null : Context.Find<T>(id);
     }
 
     public T? Get(string id, params Expression<Func<T, object>>[] includes)

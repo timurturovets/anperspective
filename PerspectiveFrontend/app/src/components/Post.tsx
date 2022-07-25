@@ -2,10 +2,13 @@
 import request from '../Requests/request'
 
 export interface PostInfo {
-    header: string,
+    postId: string,
+    header: string,    
+    timePosted: string,
     authorName: string,
     rawHtml: string,
-    timePosted: string
+    slug: string,
+    imageLocation: string
 }
 
 interface PostState {

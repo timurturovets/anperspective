@@ -47,7 +47,4 @@ public static class Extensions
     public static void UseAuthMiddleware(this WebApplication app)
         => app.UseMiddleware<AuthMiddleware>();
 
-    public static void UseRequestsLogger(this WebApplication app)
-        => app.UseMiddleware<RequestLoggingMiddleware>();
-
 }

@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using PerspectiveAPI.Services;
@@ -12,17 +11,14 @@ namespace PerspectiveAPI.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly ILogger<AuthController> _logger;
     private readonly AuthService _authService;
     private readonly UserRepository _userRepo;
 
     public AuthController(
-        ILogger<AuthController> logger, 
         AuthService authService,
         UserRepository userRepo
         )
     {
-        _logger = logger;
         _authService = authService;
         _userRepo = userRepo;
     }

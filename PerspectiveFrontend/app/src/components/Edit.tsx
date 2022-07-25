@@ -29,7 +29,7 @@ export default class Edit extends Component<any, EditState> {
     
     render(){
         const { isLoading, news, message } = this.state;
-        return <AuthRoute roles={["editor", "admin"]}>
+        return <AuthRoute roles={["editor", "admin"]} fromUrl="/create">
                 <h1 className="text-center">Редактирование постов</h1>
                 <Link to="/create" className="btn btn-success">Создать новый пост</Link><br />
                 {isLoading

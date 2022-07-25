@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 
 using PerspectiveAPI.Models.DTO;
 using PerspectiveAPI.Models.Domain;
@@ -25,39 +25,48 @@ public class EditController : ControllerBase
     [HttpGet("all")]
     public IActionResult GetAll()
     {
-        var posts = _postRepo.GetAll().Select(p=>p.ToInfo()).ToList();
+        var posts = _postRepo.GetAll().Select(p=>p.ToDto()).ToList();
         if (posts.Count < 1) return NoContent();
 
         return Ok(posts);
     }
     
     [HttpPost("create")]
-    public IActionResult CreatePost([FromForm] CreatePostDto dto)
+    public async Task<IActionResult> CreatePost([FromForm] CreatePostDto dto)
     {
-        var creator = _userRepo.GetByClaims(User);
+        var principal = HttpContext.Items["User"] as ClaimsPrincipal;
+        var creator = _userRepo.GetByClaims(principal!);
         var post = new Post
         {
             Header = dto.Header,
             Author = creator,
             TimePosted = DateTime.UtcNow
         };
+        
         var env = HttpContext.GetEnvironment();
-        post.SetImage(dto.Image!, env);
+        await post.SetImage(dto.Image!, env);
         
         _postRepo.Add(post);
         return Ok(post.PostId);
     }
 
     [HttpPut("update")]
-    public IActionResult UpdatePost([FromForm]EditPostDto dto)
+    public async Task<IActionResult> UpdatePost([FromForm]EditPostDto dto)
     {
-        var user = _userRepo.GetByClaims(User)!;
-        var post = _postRepo.Get(dto.PostId!);
+        var principal = HttpContext.Items["User"] as ClaimsPrincipal;
+        var user = _userRepo.GetByClaims(principal!);
+        var post = _postRepo.Get(dto.PostId);
         
         if (post is null) return NotFound();
-        if (user.Role == UserRole.Editor && post.Author!.UserId != user.UserId) return Forbid();
-        
+        if (user?.Role == UserRole.Editor && post.Author?.UserId != user.UserId) return Forbid();
+
         post.Edit(dto);
+        if (dto.Image is not null)
+        {
+            var env = HttpContext.GetEnvironment();
+            await post.SetImage(dto.Image, env);
+        }
+        
         _postRepo.Update(post);
         
         return Ok();
@@ -69,7 +78,8 @@ public class EditController : ControllerBase
         var post = _postRepo.Get(id);
         if (post is null) return NotFound();
 
-        var user = _userRepo.GetByClaims(User);
+        var principal = HttpContext.Items["User"] as ClaimsPrincipal;
+        var user = _userRepo.GetByClaims(principal!);
         if (user?.Role == UserRole.Editor && post.AuthorId != user.UserId) return Forbid();
 
         _postRepo.Delete(post);
@@ -82,7 +92,8 @@ public class EditController : ControllerBase
         var post = _postRepo.Get(id);
         if (post is null) return NotFound();
 
-        var user = _userRepo.GetByClaims(User);
+        var principal = HttpContext.Items["User"] as ClaimsPrincipal;
+        var user = _userRepo.GetByClaims(principal!);
         if (user?.Role == UserRole.Editor && post.AuthorId != user.UserId) return Forbid();
 
         return Ok(post.ToDto());

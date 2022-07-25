@@ -23,7 +23,7 @@ export default class Create extends Component<any, CreateState> {
     
     render() {
         const { submitted, success, postId, errors } = this.state;
-        return <AuthRoute roles={["editor", "admin"]}>
+        return <AuthRoute roles={["editor", "admin"]} fromUrl="/create">
             {submitted
                 ? success
                     ? <Navigate to={`/edit/post?id=${postId}`} />

@@ -36,35 +36,22 @@ public class Post
     {
         Header = dto.Header ?? Header;
         RawHtml = dto.RawHtml ?? RawHtml;
-        if(dto.Image is not null) SetImage(dto.Image);
     }
-    #region ToDataModelMethods
-    public PostInfo ToInfo()
-    {
-        return new PostInfo
-        {
-            PostId = PostId,
-            TimePosted = TimePosted.ToString("HH:mm:ss dd.MM.yyyy"),
-            Header = Header,
-            Slug = Slug,
-            ImageLocation = ImageLocation,
-            AuthorName = Author?.UserName ?? "Аноним"
-        };
-    }
-
     public PostDto ToDto()
     {
         return new PostDto
         {
+            PostId = PostId,
             Header = Header,
             RawHtml = RawHtml,
+            Slug = Slug,
             AuthorName = Author?.UserName ?? "Аноним",
-            TimePosted = TimePosted.ToString("HH:mm:ss dd.MM.yyyy")
+            TimePosted = TimePosted.ToString("HH:mm:ss dd.MM.yyyy"),
+            ImageLocation = ImageLocation
         };
     }
-#endregion
     #region ImageManipulationMethods
-    public async void SetImage(IFormFile image, IWebHostEnvironment? env = default)
+    public async Task SetImage(IFormFile image, IWebHostEnvironment env)
     {
         if (HasImage)
         {
@@ -75,18 +62,17 @@ public class Post
             return;
         }
         
-        if(env is null) return;
-        
-        var fileRoute = Guid.NewGuid().ToString()[..7] + image.FileName;
+        var fileRoute = Guid.NewGuid().ToString()[..10] + image.FileName;
 
-        var imageLocation = $"/images/posts/{fileRoute}";
+        var imageLocation = $"/img/posts/{fileRoute}";
 
         var pathToImage = Path.Combine(
             env.WebRootPath,
             "img",
             "posts",
-            imageLocation
+            fileRoute
         );
+        
         ImageLocation = imageLocation;
         ImagePhysicalPath = pathToImage;
 

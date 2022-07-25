@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-using PerspectiveAPI.Models.DTO;
-using PerspectiveAPI.Models.Domain;
 using PerspectiveAPI.Data.Repositories;
 
 namespace PerspectiveAPI.Controllers;
@@ -20,7 +18,7 @@ public class PostsController : ControllerBase
     [HttpGet("all")]
     public IActionResult All([FromQuery] int count)
     {
-        var posts = _postRepo.GetAll().Select(p => p.ToInfo()).ToList();
+        var posts = _postRepo.GetAll().Select(p => p.ToDto()).ToList();
         
         if (posts.Count < 1) return NoContent();
         
