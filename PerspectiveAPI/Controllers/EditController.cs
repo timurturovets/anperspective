@@ -61,11 +61,14 @@ public class EditController : ControllerBase
         if (user?.Role == UserRole.Editor && post.Author?.UserId != user.UserId) return Forbid();
 
         post.Edit(dto);
+        
         if (dto.Image is not null)
         {
             var env = HttpContext.GetEnvironment();
             await post.SetImage(dto.Image, env);
         }
+        else post.DeleteImage();
+        
         
         _postRepo.Update(post);
         

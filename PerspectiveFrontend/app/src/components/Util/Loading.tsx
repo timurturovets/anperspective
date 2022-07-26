@@ -4,10 +4,12 @@ interface LoadingProps {
     side?: number
     withText: Boolean
 }
+
 interface LoadingState{
     intervalId?: NodeJS.Timer,
     angle: number
 }
+
 export default class Loading extends Component<LoadingProps, LoadingState> {
     constructor(props: LoadingProps) {
         super(props);

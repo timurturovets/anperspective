@@ -35,7 +35,15 @@ app.UseCors(options =>
 {
     options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
 });
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseAuthMiddleware();
+app.Use((ctx, next) =>
+{
+    var l = ctx.L<Program>();
+    var path = ctx.Request.Path;
+    l.LogCritical($"Path: {path}");
+    return next(ctx);
+});
 app.MapControllers();
 app.Run();

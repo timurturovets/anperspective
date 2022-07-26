@@ -53,18 +53,9 @@ public class Post
     #region ImageManipulationMethods
     public async Task SetImage(IFormFile image, IWebHostEnvironment env)
     {
-        if (HasImage)
-        {
-            if(File.Exists(ImagePhysicalPath)) File.Delete(ImagePhysicalPath);
-
-            await using var stream = new FileStream(ImagePhysicalPath!, FileMode.Create);
-            await image.CopyToAsync(stream);
-            return;
-        }
-        
         var fileRoute = Guid.NewGuid().ToString()[..10] + image.FileName;
 
-        var imageLocation = $"/img/posts/{fileRoute}";
+        var imageLocation = $"img/posts/{fileRoute}";
 
         var pathToImage = Path.Combine(
             env.WebRootPath,
@@ -72,7 +63,9 @@ public class Post
             "posts",
             fileRoute
         );
-        
+
+        if (HasImage && File.Exists(ImagePhysicalPath)) File.Delete(ImagePhysicalPath);
+
         ImageLocation = imageLocation;
         ImagePhysicalPath = pathToImage;
 

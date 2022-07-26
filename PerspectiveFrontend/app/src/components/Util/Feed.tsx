@@ -1,16 +1,8 @@
 import React, { Component } from 'react'
 import Headline  from './Headline'
 import Loading from './Loading'
+import HeadlineData from '../Interfaces/HeadlineData'
 import request from '../../Requests/request'
-
-export interface HeadlineData {
-    postId: string,
-    timePosted: string,
-    header: string,
-    slug: string,
-    authorName: string, 
-    imageLocation: string
-}
 
 interface FeedState {
     isLoading: Boolean,

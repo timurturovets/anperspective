@@ -1,15 +1,6 @@
 ﻿import React, { Component } from 'react'
 import request from '../Requests/request'
-
-export interface PostInfo {
-    postId: string,
-    header: string,    
-    timePosted: string,
-    authorName: string,
-    rawHtml: string,
-    slug: string,
-    imageLocation: string
-}
+import PostInfo from './Interfaces/PostInfo'
 
 interface PostState {
     isLoading: Boolean,
@@ -38,7 +29,7 @@ export default class Post extends Component<any, PostState> {
             : <>
                 <h1>{info?.header}</h1>
                 <p>Опубликовал {info?.authorName} {info?.timePosted}</p>
-                <div dangerouslySetInnerHTML={{__html: info?.rawHtml || ""}}></div>
+                <div dangerouslySetInnerHTML={{__html: info?.rawHtml || ""}} />
             </>
     }
     

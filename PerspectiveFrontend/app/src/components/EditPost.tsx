@@ -5,7 +5,7 @@ import ReactQuill from 'react-quill'
 import EditorToolbar from './Util/EditorToolbar'
 import 'react-quill/dist/quill.snow.css';
 import request from '../Requests/request'
-import { PostInfo } from './Post'
+import PostInfo from './Interfaces/PostInfo'
 
 interface EditPostState {
     isLoading: boolean,
@@ -46,6 +46,7 @@ export default class EditPost extends Component<any, EditPostState> {
     
     render() {
         const { isLoading, isSaved, post, message } = this.state;
+        const imgUrl = post?.imageLocation && `${process.env.REACT_APP_API_URL}/${post.imageLocation}`;
         return <AuthRoute>
             {isLoading
                 ? <Loading withText />
@@ -55,9 +56,20 @@ export default class EditPost extends Component<any, EditPostState> {
                         : null
                     }
                     <form>
-                        <input className="form-control" type="file" accept="image/*" id="postImage" />
+                        <div className="d-flex flex-row">
+                            {
+                                (imgUrl && <>
+                                    <img src={imgUrl} alt="Картинка заголовка" className="headline-img"/>
+                                    <br />
+                                    <button className="btn btn-sm btn-outline-danger"
+                                            onClick={this.handleImageDelete}>Удалить картинку</button>
+                                </>) 
+                                || <input onChange={e=>this.setState({isSaved: false})}
+                                      className="form-control" type="file" accept="image/*" id="postImage"/>
+                            }
                         <input className="form-control form-control-lg mb-3" defaultValue={post?.header}
-                               onChange={e=>this.handleHeaderUpdate(e)} placeholder="Заголовок"/>
+                               onChange={this.handleHeaderUpdate} placeholder="Заголовок"/>
+                        </div>
                         <EditorToolbar />
                         <ReactQuill value={post?.rawHtml}
                             modules={EditPost.modules}
@@ -65,12 +77,12 @@ export default class EditPost extends Component<any, EditPostState> {
                             onChange={this.handleChange}/>
                         {!isSaved
                             ? <>
-                            <b>Есть несохранённые изменения.</b>
+                                <b>Есть несохранённые изменения.</b>
                                 <br />
                             </>
                             : null
                         }
-                        <button className="btn btn-lg btn-outline-success" 
+                        <button className={isSaved?"btn btn-lg btn-outline-success":"btn btn-lg btn-success"} 
                                 onClick={this.handleSave} disabled={isSaved}>
                             Сохранить
                         </button>
@@ -89,6 +101,7 @@ export default class EditPost extends Component<any, EditPostState> {
             isSaved: false
         });
     }
+    
     handleHeaderUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         
@@ -97,6 +110,21 @@ export default class EditPost extends Component<any, EditPostState> {
             ...this.state.post,
                 header: e.target.value
             } as PostInfo})
+    }
+    
+    handleImageDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+        
+        const { post } = this.state;
+        if(!post) return;
+        
+        this.setState({
+            post: {
+                ...post,
+                imageLocation: ""
+            },
+            isSaved: false
+        })
     }
     
     handleSave = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

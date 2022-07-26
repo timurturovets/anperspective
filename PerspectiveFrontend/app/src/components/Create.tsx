@@ -9,6 +9,7 @@ interface CreateState {
     postId: string,
     errors: string[]
 }
+
 export default class Create extends Component<any, CreateState> {
     constructor(props: any){
         super(props);

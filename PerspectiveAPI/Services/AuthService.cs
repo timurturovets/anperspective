@@ -29,7 +29,7 @@ public class AuthService
         {
             UserId = user.UserId,
             Token = token,
-            TokenLifeSpan = 3600,
+            TokenLifeSpan = 86400,
             Role = user.GetRole()
         };
     }
@@ -69,7 +69,7 @@ public class AuthService
                 new(ClaimTypes.Name, user.UserName!),
                 new(ClaimTypes.Role, user.GetRole())
             }),
-            Expires = DateTime.UtcNow.AddHours(2),
+            Expires = DateTime.UtcNow.AddDays(1),
             SigningCredentials = new SigningCredentials(symmetricSecurityKey, 
                 SecurityAlgorithms.HmacSha256Signature)
         };
