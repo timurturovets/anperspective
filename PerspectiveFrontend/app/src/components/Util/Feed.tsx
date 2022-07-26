@@ -5,7 +5,8 @@ import HeadlineData from '../Interfaces/HeadlineData'
 import request from '../../Requests/request'
 
 interface FeedState {
-    isLoading: Boolean,
+    isLoading: boolean,
+    message?: string,
     news: HeadlineData[]
 }
 
@@ -15,6 +16,7 @@ export default class Feed extends Component<any, FeedState> {
         
         this.state = {
             isLoading: true,
+            message: undefined,
             news: []
         }
     }
@@ -22,19 +24,23 @@ export default class Feed extends Component<any, FeedState> {
         this.getPosts();
     }
     render() {
-        const { isLoading, news } = this.state;
+        const { isLoading, message, news } = this.state;
         return isLoading
             ? <Loading withText />
-            : news.map(n => <Headline key={n.postId} data={n} /> );
+            : <>
+                {message && <b>{message}</b>}
+                {news.map(n => <Headline key={n.postId} data={n} />)}
+                </>
     }
     
     getPosts = async () => {
         await request('/api/posts/all').then(response => {
-           if (response.status === 200) {
-               const result = response.data;
-               this.setState({ isLoading: false, news: result });
-           }
-           else alert(`Произошла ошибка. Перезайдите на сайт и попробуйте снова. [${response.status}]`);
-        }).catch(err=>console.log(err));
+           const result = response.data;
+           this.setState({ isLoading: false, news: result });
+        }).catch(err=> {
+            this.setState({
+                message: `Произошла непредвиденная ошибка. Попробуйте перезайти на сайт. [${err.response.status}]`
+            });
+        });
     }
 }

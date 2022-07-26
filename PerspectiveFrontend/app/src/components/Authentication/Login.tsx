@@ -93,7 +93,7 @@ export default class Login extends Component<any, LoginPageState> {
                 
                 const { fromUrl } = this.state;
                 if (!fromUrl) return;
-                window.location.href = fromUrl;
+                window.location.replace(fromUrl);
             }
             
             if (response.status === 400) {

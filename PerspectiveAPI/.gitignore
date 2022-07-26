@@ -371,7 +371,6 @@ FodyWeavers.xsd
 
 # globs
 Makefile.in
-*.userprefs
 *.usertasks
 config.make
 config.status
@@ -454,3 +453,4 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 appsettings.json
+/wwwroot/img/posts/

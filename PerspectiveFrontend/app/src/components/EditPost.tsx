@@ -105,11 +105,14 @@ export default class EditPost extends Component<any, EditPostState> {
     handleHeaderUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         
+        const { post } = this.state;
+        if(!post) return;
+        
         this.setState({
             post: {
-            ...this.state.post,
+                ...post,
                 header: e.target.value
-            } as PostInfo})
+            }})
     }
     
     handleImageDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -150,8 +153,6 @@ export default class EditPost extends Component<any, EditPostState> {
         }).then(response => {
             this.setState({isSaved: true});
         }).catch(err=>{
-            console.log(err);
-            alert('err in console');
             this.setState({
                 message: `Произошла непредвиденная ошибка. Попробуйте перезайти на страницу. [${err.response.status}]`
             });

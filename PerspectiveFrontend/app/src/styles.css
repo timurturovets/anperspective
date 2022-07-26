@@ -5,8 +5,8 @@
 
 .headline {
     text-decoration: none;
-}
 
+}
 .logo {
     overflow: hidden;
     width: 136px;
@@ -18,6 +18,20 @@
     border-radius: 100px;
 }
 
-.headline-img {
-    height: 100px;
+.headline-img, .headline-text {
+    height: 150px;
+}
+
+.headline-text {
+    width:100%;
+    color: black;
+    border: 1px solid gray;
+    border-left: none;
+    background-color: #bbf5ff;
+    transition: background-color 325ms, color 325ms;
+}
+
+.headline-text:hover {
+    background-color: #2097e3;
+    color: white;
 }
