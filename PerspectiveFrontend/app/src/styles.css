@@ -27,7 +27,6 @@
     color: black;
     border: 1px solid gray;
     border-left: none;
-    background-color: #bbf5ff;
     transition: background-color 325ms, color 325ms;
 }
 

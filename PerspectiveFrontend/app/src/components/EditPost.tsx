@@ -22,7 +22,6 @@ export default class EditPost extends Component<any, EditPostState> {
         "underline",
         "strike",
         "link",
-        "blockquote",
     ];
     
     static modules = { 
@@ -136,21 +135,23 @@ export default class EditPost extends Component<any, EditPostState> {
         const { post } = this.state;
         if(!post) return;
         
-        const { postId, header, rawHtml } = post;
-        
-        const fileInput = document.getElementById('postImage') as HTMLInputElement;
-        const image = fileInput.files && fileInput.files[0];
-        
+        const { postId, header, rawHtml, imageLocation } = post;
+
         const formData = new FormData();
         formData.append('PostId', postId);
         formData.append('Header', header);
         formData.append('RawHtml', rawHtml);
-        if(image) formData.append('Image', image);
+
+        if(!imageLocation) {
+            const fileInput = document.getElementById('postImage') as HTMLInputElement;
+            const image = fileInput.files && fileInput.files[0];
+            if(image) formData.append('Image', image);
+        }
         
         await request('/api/edit/update', {
             method: 'PUT',
             body: formData
-        }).then(response => {
+        }).then(() => {
             this.setState({isSaved: true});
         }).catch(err=>{
             this.setState({

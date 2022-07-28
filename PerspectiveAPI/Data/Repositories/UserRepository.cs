@@ -1,10 +1,6 @@
 ﻿using System.Security.Claims;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.EntityFrameworkCore;
+
 using PerspectiveAPI.Models.Domain;
-
-
 
 namespace PerspectiveAPI.Data.Repositories;
 
@@ -14,9 +10,10 @@ public class UserRepository : RepositoryBase<User>
 
     public User? GetByClaims(ClaimsPrincipal principal)
     {
-        return principal.Identity is null 
+        var name = principal.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+        return name is null 
             ? null 
-            : GetBy(u => u.UserName == principal.Identity.Name);
+            : GetBy(u => u.UserName == name);
     }
     public bool CheckIfNameIsTaken(string? name)
     {

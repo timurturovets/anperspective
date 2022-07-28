@@ -69,7 +69,7 @@ export default class Login extends Component<any, LoginPageState> {
 
     handleSubmit = 
         async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, 
-         setStatus: (s:Boolean, r:string) => void) 
+         setStatus: (s:boolean, r:string) => void) 
             : Promise<void> =>  {
         
         event.preventDefault();

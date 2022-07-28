@@ -42,7 +42,8 @@ public class EditController : ControllerBase
             Author = creator,
             TimePosted = DateTime.UtcNow
         };
-        
+        var l = HttpContext.L<EditController>();
+        l.LogCritical($"Creator is null: {creator is null}");
         var env = HttpContext.GetEnvironment();
         await post.SetImage(dto.Image!, env);
         

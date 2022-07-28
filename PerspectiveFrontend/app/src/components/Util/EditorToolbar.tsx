@@ -13,7 +13,6 @@ export default class EditorToolbar extends Component {
             <button className="ql-underline" />
             <button className="ql-strike" />
             <button className="ql-link" />
-            <button className="ql-blockquote" />
         </div>
     }
 }
