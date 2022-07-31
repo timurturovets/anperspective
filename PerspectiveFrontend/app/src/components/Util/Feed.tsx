@@ -25,7 +25,6 @@ export default class Feed extends Component<any, FeedState> {
     }
     render() {
         const { isLoading, message, news } = this.state;
-        console.log(`pog: ${news} pog`);
         return isLoading
             ? <Loading withText />
             : <>

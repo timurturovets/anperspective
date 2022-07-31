@@ -6,6 +6,7 @@ import EditorToolbar from './Util/EditorToolbar'
 import 'react-quill/dist/quill.snow.css';
 import request from '../Requests/request'
 import PostInfo from '../Interfaces/PostInfo'
+import {AxiosError} from "axios";
 
 interface EditPostState {
     isLoading: boolean,
@@ -66,15 +67,6 @@ export default class EditPost extends Component<any, EditPostState> {
                                 || <input onChange={e=>this.setState({isSaved: false})}
                                       className="form-control" type="file" accept="image/*" id="postImage"/>
                             }
-                            <div className="form-check form-switch">
-                                
-                                <input className="form-check-input" type="checkbox" 
-                                   onChange={()=>this.setState({
-                                       post:{...post, isVisible: !post?.isVisible} as PostInfo, isSaved: false
-                                   })} defaultChecked={post?.isVisible} />
-                                
-                                <label className="form-check-label">Доступен для просмотра</label>
-                            </div>
                             <input className="form-control form-control-lg mb-3" defaultValue={post?.header}
                                    onChange={this.handleHeaderUpdate} placeholder="Заголовок"/>
                         </div>
@@ -85,7 +77,15 @@ export default class EditPost extends Component<any, EditPostState> {
                             formats={EditPost.formats}
                             onChange={this.handleChange} />
                         
-                        {isSaved && <> <b>Есть несохранённые изменения.</b><br /> </>}
+                        <div className="form-check form-switch">
+                            <input className="form-check-input" type="checkbox"
+                                   onChange={()=>this.setState({
+                                       post:{...post, isVisible: !post?.isVisible} as PostInfo, isSaved: false
+                                   })} defaultChecked={post?.isVisible} />
+                            <label className="form-check-label">Доступен для просмотра</label>
+                        </div>
+                        
+                        {!isSaved && <> <b>Есть несохранённые изменения.</b><br /> </>}
                         <button className={isSaved?"btn btn-lg btn-outline-success":"btn btn-lg btn-success"} 
                                 onClick={this.handleSave} disabled={isSaved}>
                             Сохранить
@@ -158,10 +158,17 @@ export default class EditPost extends Component<any, EditPostState> {
             method: 'PUT',
             body: formData
         }).then(() => {
-            this.setState({isSaved: true});
-        }).catch(err=>{
+            this.setState({isSaved: true, message: undefined});
+        }).catch((err:AxiosError)=>{
+            let msg = `${err.response?.status}`;
+            const data: any = err.response?.data;
+            const errors = data.errors;
+            console.log(errors);
+            for(const err in errors){
+                msg += ` ${errors[err][0]}`;
+            }
             this.setState({
-                message: `Произошла непредвиденная ошибка. Попробуйте перезайти на страницу. [${err.response.status}]`
+                message: `Произошла непредвиденная ошибка. Попробуйте перезайти на страницу. [${msg}]`
             });
         });
     }

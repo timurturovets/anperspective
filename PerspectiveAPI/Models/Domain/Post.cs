@@ -38,6 +38,7 @@ public class Post
     {
         Header = dto.Header ?? Header;
         RawHtml = dto.RawHtml ?? RawHtml;
+        IsVisible = dto.IsVisible;
     }
     public PostDto ToDto()
     {
@@ -46,6 +47,7 @@ public class Post
             PostId = PostId,
             Header = Header,
             RawHtml = RawHtml,
+            IsVisible = IsVisible,
             Slug = Slug,
             AuthorName = Author?.UserName ?? "Аноним",
             TimePosted = TimePosted.ToString("HH:mm:ss dd.MM.yyyy"),

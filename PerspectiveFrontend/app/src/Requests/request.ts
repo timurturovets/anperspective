@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios'
+import axios, {Axios, AxiosError, AxiosResponse} from 'axios'
 import { getJWTInfo, setJWTInfo } from './JWTLocalStorage'
 import JWTInfo from '../Interfaces/JWTInfo'
 
@@ -24,25 +24,12 @@ export default function request(route: string, params?: RequestData) : Promise<A
 function enableRequestInterceptor(token: string) {
     client.interceptors.request.use(config=>{
         if(!config.headers) return;
-        console.log(`interceptor with token ${token.slice(0, 5)}... enabled`);
         config.headers["Authorization"] = `Bearer ${token}`;
         return config;
     });
 }
 
-function enableResponseInterceptor() {
-    client.interceptors.response.use(config=>{
-        if(config.status === 401) {
-            alert('401');
-            window.location.href ="/"
-        }
-        return config;
-    });
-}
-
 export function configureAuthentication(info?: JWTInfo) {
-    enableResponseInterceptor();
-    
     if(!info) {
         const token = getJWTInfo()?.token;
         if(token) enableRequestInterceptor(token);
