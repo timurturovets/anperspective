@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { getJWTInfo } from './Requests/JWTLocalStorage'
-import enableInterceptor from './Requests/JWTInterceptor'
+import { configureAuthentication } from './Requests/request'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import './styles.css'
 
 import React    from 'react'
 import Layout   from './components/Layout'
@@ -15,9 +16,7 @@ import Register from './components/Authentication/Register'
 export default class App extends React.Component {
   
   componentDidMount() {
-    const token = getJWTInfo()?.token
-    if(token) enableInterceptor(token);
-    console.log(`app's componentDidMount, token: ${token}`);
+    configureAuthentication();
   }
   
   render(){

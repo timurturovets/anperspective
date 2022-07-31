@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react'
 import request from '../Requests/request'
-import PostInfo from './Interfaces/PostInfo'
+import PostInfo from '../Interfaces/PostInfo'
 
 interface PostState {
     isLoading: Boolean,
@@ -24,9 +24,11 @@ export default class Post extends Component<any, PostState> {
     render() {
         const { isLoading, info } = this.state;
         
+        const imgUrl = `${process.env.REACT_APP_API_URL}/${info?.imageLocation}`;
         return isLoading 
             ? <h3>Загрузка...</h3>
             : <>
+                <img src={imgUrl} alt={info?.header} style={{height:'500px'}} />
                 <h1>{info?.header}</h1>
                 <p>Опубликовал {info?.authorName} {info?.timePosted}</p>
                 <div dangerouslySetInnerHTML={{__html: info?.rawHtml || ""}} />

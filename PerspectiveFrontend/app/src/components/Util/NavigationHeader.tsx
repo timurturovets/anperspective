@@ -4,7 +4,6 @@ import { Container } from "react-bootstrap"
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import { AuthContextConsumer } from "../../AuthContext"
-import '../../styles.css'
 
 export default class NavigationHeader extends Component { 
     constructor(props: any){

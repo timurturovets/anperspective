@@ -39,6 +39,9 @@ namespace PerspectiveAPI.Migrations
                     b.Property<string>("ImagePhysicalPath")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
+
                     b.Property<string>("RawHtml")
                         .HasColumnType("nvarchar(max)");
 
@@ -60,18 +63,20 @@ namespace PerspectiveAPI.Migrations
                             PostId = "1",
                             AuthorId = "1",
                             Header = "Первый пост",
+                            IsVisible = false,
                             RawHtml = "<h1>Это реальный пост, ребята</h1>",
                             Slug = "pervyii-post",
-                            TimePosted = new DateTime(2022, 7, 19, 13, 4, 58, 960, DateTimeKind.Utc).AddTicks(5977)
+                            TimePosted = new DateTime(2022, 7, 30, 8, 42, 57, 377, DateTimeKind.Utc).AddTicks(2138)
                         },
                         new
                         {
                             PostId = "2",
                             AuthorId = "1",
                             Header = "Второй post",
+                            IsVisible = false,
                             RawHtml = "<hr /> <h5>Это реально???</h5> <h1>Да, это реально)</h1>",
                             Slug = "vtoroii-post",
-                            TimePosted = new DateTime(2022, 7, 19, 13, 4, 58, 960, DateTimeKind.Utc).AddTicks(6386)
+                            TimePosted = new DateTime(2022, 7, 30, 8, 42, 57, 377, DateTimeKind.Utc).AddTicks(2630)
                         });
                 });
 
@@ -102,17 +107,17 @@ namespace PerspectiveAPI.Migrations
                         new
                         {
                             UserId = "1",
-                            Password = "AQinvNmfummuRGFenlQuSUmbEGAJcJEVfCFJhEoZmSo=",
+                            Password = "AAeeyDhadGAGkJKH9j1Ji6E40L6EHHfu2H4XjE5lYig=",
                             Role = 2,
-                            Salt = new byte[] { 222, 95, 214, 19, 9, 63, 115, 211, 78, 67, 250, 148, 110, 196, 15, 156 },
+                            Salt = new byte[] { 189, 108, 204, 176, 69, 234, 21, 226, 116, 31, 54, 44, 72, 76, 124, 228 },
                             UserName = "admin"
                         },
                         new
                         {
                             UserId = "2",
-                            Password = "zoc13OoaNLuSlntigT7e21ohl/FhQzSoevPeldseanE=",
+                            Password = "kxDDElhKw9Wybk4/d8F9nAESNUHo1FtZbZTp2G3pyWc=",
                             Role = 0,
-                            Salt = new byte[] { 182, 31, 96, 175, 15, 1, 108, 51, 114, 77, 146, 240, 96, 113, 45, 115 },
+                            Salt = new byte[] { 210, 253, 114, 231, 214, 1, 66, 117, 40, 32, 184, 96, 212, 185, 6, 252 },
                             UserName = "user"
                         });
                 });

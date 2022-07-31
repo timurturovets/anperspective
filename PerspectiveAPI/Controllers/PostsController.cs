@@ -18,7 +18,11 @@ public class PostsController : ControllerBase
     [HttpGet("all")]
     public IActionResult All([FromQuery] int count)
     {
-        var posts = _postRepo.GetAll().Select(p => p.ToDto()).ToList();
+        var posts = _postRepo
+            .GetAll()
+            .Where(p=>p.IsVisible)
+            .Select(p => p.ToDto())
+            .ToList();
         
         if (posts.Count < 1) return NoContent();
         

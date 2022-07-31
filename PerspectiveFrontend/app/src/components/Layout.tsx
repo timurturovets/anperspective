@@ -1,6 +1,5 @@
 import React, { Component, ReactNode } from 'react'
 import NavigationHeader from './Util/NavigationHeader'
-import '../styles.css'
 import Footer from "./Util/Footer";
 
 interface LayoutProps {

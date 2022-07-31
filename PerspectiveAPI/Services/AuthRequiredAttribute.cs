@@ -28,7 +28,7 @@ public class AuthRequiredAttribute : Attribute, IAuthorizationFilter
             
             if (_roles.Contains(userRole)) return;
         }
-
+        l.LogCritical($"{context.HttpContext.Request.Path} request is unauthorized");
         context.Result = new UnauthorizedResult();
     }
 }

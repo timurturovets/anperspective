@@ -5,7 +5,6 @@
 }
 
 export function setJWTInfo(info: JWTInfo) : void {
-    console.log(info);
     const expires = new Date();
     expires.setTime(expires.getTime() + info.expires * 1000);
     const item: JWTInfo = {

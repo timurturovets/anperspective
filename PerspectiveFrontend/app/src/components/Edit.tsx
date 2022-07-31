@@ -1,10 +1,10 @@
 ﻿import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import request from '../Requests/request'
 import AuthRoute from './Authentication/AuthRoute'
 import Loading from './Util/Loading'
 import EditPostHeadline from "./Util/EditPostHeadline";
-import HeadlineData from './Interfaces/HeadlineData'
-import { Link } from 'react-router-dom'
+import HeadlineData from '../Interfaces/HeadlineData'
 
 interface EditState {
     isLoading: Boolean,

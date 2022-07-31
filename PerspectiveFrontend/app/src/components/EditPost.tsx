@@ -5,7 +5,7 @@ import ReactQuill from 'react-quill'
 import EditorToolbar from './Util/EditorToolbar'
 import 'react-quill/dist/quill.snow.css';
 import request from '../Requests/request'
-import PostInfo from './Interfaces/PostInfo'
+import PostInfo from '../Interfaces/PostInfo'
 
 interface EditPostState {
     isLoading: boolean,
@@ -66,21 +66,26 @@ export default class EditPost extends Component<any, EditPostState> {
                                 || <input onChange={e=>this.setState({isSaved: false})}
                                       className="form-control" type="file" accept="image/*" id="postImage"/>
                             }
-                        <input className="form-control form-control-lg mb-3" defaultValue={post?.header}
-                               onChange={this.handleHeaderUpdate} placeholder="Заголовок"/>
+                            <div className="form-check form-switch">
+                                
+                                <input className="form-check-input" type="checkbox" 
+                                   onChange={()=>this.setState({
+                                       post:{...post, isVisible: !post?.isVisible} as PostInfo, isSaved: false
+                                   })} defaultChecked={post?.isVisible} />
+                                
+                                <label className="form-check-label">Доступен для просмотра</label>
+                            </div>
+                            <input className="form-control form-control-lg mb-3" defaultValue={post?.header}
+                                   onChange={this.handleHeaderUpdate} placeholder="Заголовок"/>
                         </div>
+                        
                         <EditorToolbar />
                         <ReactQuill value={post?.rawHtml}
                             modules={EditPost.modules}
                             formats={EditPost.formats}
-                            onChange={this.handleChange}/>
-                        {!isSaved
-                            ? <>
-                                <b>Есть несохранённые изменения.</b>
-                                <br />
-                            </>
-                            : null
-                        }
+                            onChange={this.handleChange} />
+                        
+                        {isSaved && <> <b>Есть несохранённые изменения.</b><br /> </>}
                         <button className={isSaved?"btn btn-lg btn-outline-success":"btn btn-lg btn-success"} 
                                 onClick={this.handleSave} disabled={isSaved}>
                             Сохранить
@@ -135,12 +140,13 @@ export default class EditPost extends Component<any, EditPostState> {
         const { post } = this.state;
         if(!post) return;
         
-        const { postId, header, rawHtml, imageLocation } = post;
+        const { postId, header, rawHtml, imageLocation, isVisible } = post;
 
         const formData = new FormData();
         formData.append('PostId', postId);
         formData.append('Header', header);
         formData.append('RawHtml', rawHtml);
+        formData.append('IsVisible', ""+isVisible);
 
         if(!imageLocation) {
             const fileInput = document.getElementById('postImage') as HTMLInputElement;

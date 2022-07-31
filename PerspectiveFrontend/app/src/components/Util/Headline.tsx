@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import HeadlineData from '../Interfaces/HeadlineData'
+import HeadlineData from '../../Interfaces/HeadlineData'
 
 export interface HeadlineProps {
     data: HeadlineData

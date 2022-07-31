@@ -2,9 +2,8 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import request  from '../../Requests/request'
 import { setJWTInfo } from "../../Requests/JWTLocalStorage";
-import enableInterceptor from '../../Requests/JWTInterceptor'
+import { configureAuthentication} from "../../Requests/request";
 import { AuthContextConsumer } from '../../AuthContext'
-import 'bootstrap/dist/css/bootstrap.min.css'
 
 interface LoginPageState {
     userNameErrors?: string[],
@@ -88,8 +87,7 @@ export default class Login extends Component<any, LoginPageState> {
                       role = result.role;
                 
                 setStatus(true, role);
-                enableInterceptor(token);
-                setJWTInfo({token, expires, role});
+                configureAuthentication({token, expires, role});
                 
                 const { fromUrl } = this.state;
                 if (!fromUrl) return;

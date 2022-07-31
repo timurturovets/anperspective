@@ -2,6 +2,7 @@
     postId: string,
     header: string,
     timePosted: string,
+    isVisible: boolean,
     authorName: string,
     rawHtml: string,
     slug: string,

@@ -22,6 +22,8 @@ public class Post
             Slug = value?.Slugify();
         } 
     }
+
+    public bool IsVisible { get; set; }
     public string? Slug { get; set; }
     public string? RawHtml { get; set; }
     public string? ImageLocation { get; set; }

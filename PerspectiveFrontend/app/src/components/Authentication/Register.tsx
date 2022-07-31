@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import request from '../../Requests/request'
 import { AuthContextConsumer } from '../../AuthContext'
-import enableInterceptor from "../../Requests/JWTInterceptor";
-import {setJWTInfo} from "../../Requests/JWTLocalStorage";
+import { configureAuthentication } from "../../Requests/request";
 
 interface RegisterPageState{
     userNameErrors?: string[],
@@ -62,7 +61,7 @@ export default class Register extends Component<any, RegisterPageState> {
 
     handleSubmit = 
         async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-         setStatus: (s: Boolean, r:string) => void) 
+         setStatus: (s: boolean, r:string) => void) 
             : Promise<void> =>  {
         
         event.preventDefault();
@@ -81,8 +80,7 @@ export default class Register extends Component<any, RegisterPageState> {
                 const role = result.role;
 
                 setStatus(true, role);
-                enableInterceptor(token);
-                setJWTInfo({token, expires, role});
+                configureAuthentication({token, expires, role});
 
                 const query = new URLSearchParams(window.location.search);
                 if (!query.has('from')) return;
