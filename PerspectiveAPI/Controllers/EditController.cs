@@ -34,7 +34,7 @@ public class EditController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> CreatePost([FromForm] CreatePostDto dto)
     {
-        var principal = HttpContext.Items["User"] as ClaimsPrincipal;
+        var principal = HttpContext.GetPrincipal();
         var creator = _userRepo.GetByClaims(principal!);
         var post = new Post
         {
@@ -43,7 +43,6 @@ public class EditController : ControllerBase
             TimePosted = DateTime.UtcNow
         };
         var l = HttpContext.L<EditController>();
-        l.LogCritical($"Creator is null: {creator is null}");
         var env = HttpContext.GetEnvironment();
         await post.SetImage(dto.Image!, env);
         
@@ -54,7 +53,7 @@ public class EditController : ControllerBase
     [HttpPut("update")]
     public async Task<IActionResult> UpdatePost([FromForm]EditPostDto dto)
     {
-        var principal = HttpContext.Items["User"] as ClaimsPrincipal;
+        var principal = HttpContext.GetPrincipal();
         var user = _userRepo.GetByClaims(principal!);
         var post = _postRepo.Get(dto.PostId);
         
@@ -82,7 +81,7 @@ public class EditController : ControllerBase
         var post = _postRepo.Get(id);
         if (post is null) return NotFound();
 
-        var principal = HttpContext.Items["User"] as ClaimsPrincipal;
+        var principal = HttpContext.GetPrincipal();
         var user = _userRepo.GetByClaims(principal!);
         if (user?.Role == UserRole.Editor && post.AuthorId != user.UserId) return Forbid();
 
@@ -96,7 +95,7 @@ public class EditController : ControllerBase
         var post = _postRepo.Get(id);
         if (post is null) return NotFound();
 
-        var principal = HttpContext.Items["User"] as ClaimsPrincipal;
+        var principal = HttpContext.GetPrincipal();
         var user = _userRepo.GetByClaims(principal!);
         if (user?.Role == UserRole.Editor && post.AuthorId != user.UserId) return Forbid();
 

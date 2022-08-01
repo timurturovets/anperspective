@@ -3,43 +3,38 @@ import { Link } from 'react-router-dom'
 import request from '../../Requests/request'
 import { AuthContextConsumer } from '../../AuthContext'
 import { configureAuthentication } from "../../Requests/request";
+import {AxiosError} from "axios";
 
 interface RegisterPageState{
-    userNameErrors?: string[],
-    passwordErrors?: string[]
+    errors?: string[]
 }
 export default class Register extends Component<any, RegisterPageState> {
     constructor(props: any){
         super(props);
 
         this.state = {
-            userNameErrors: undefined,
-            passwordErrors: undefined
+            errors: undefined
         };
     }
 
     render() {
-        const { userNameErrors, passwordErrors } = this.state;
+        const { errors } = this.state;
         return <AuthContextConsumer>
             {({setStatus}) =>
                 <div className="m-auto text-center" style={{width: '50%'}}>
+                    {errors
+                        ? <span className="text-danger">
+                            {errors.map(e=><p>{e}</p>)}
+                        </span>
+                        : null
+                    }
                     <form>
                         <div className="form-group my-1">
                             <label>Имя пользователя</label>
-                            {userNameErrors
-                                ? <span className="text-danger">
-                                    {userNameErrors.map(err=><p>{err}</p>)}
-                                </span>
-                                : null}
                             <input className="form-control" type="text" name="username"/>
                         </div>
                         <div className="form-group mb-1">
                             <label>Пароль</label>
-                            {passwordErrors
-                                ? <span className="text-danger">
-                                    {passwordErrors.map(err=><p>{err}</p>)}
-                                </span>
-                                : null}
                             <input className="form-control" type="text" name="password"/>
                         </div>
                         <div className="form-group mb-1">
@@ -86,12 +81,23 @@ export default class Register extends Component<any, RegisterPageState> {
                 if (!query.has('from')) return;
                 window.location.href = query.get('from') as string;
             }
-            
-            if (response.status === 400) {
+        }).catch((err: AxiosError)=> {
+            if(err.response?.status === 400) {
+                const result: any = err.response?.data;
                 const errors = result.errors;
+                
+                const stateErrors: string[] = [];
+                for(const e in errors) {
+                    stateErrors.push(errors[e][0]);
+                }
+                
                 this.setState({
-                    userNameErrors: errors.UserName,
-                    passwordErrors: errors.Password
+                    errors: stateErrors
+                });
+            }
+            if(err.response?.status === 409) {
+                this.setState({
+                    errors: ['Этот ник уже занят. Попробуйте другой.']
                 });
             }
         });

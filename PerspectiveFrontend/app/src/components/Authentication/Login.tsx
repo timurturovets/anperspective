@@ -4,10 +4,10 @@ import request  from '../../Requests/request'
 import { setJWTInfo } from "../../Requests/JWTLocalStorage";
 import { configureAuthentication} from "../../Requests/request";
 import { AuthContextConsumer } from '../../AuthContext'
+import {AxiosError} from "axios";
 
 interface LoginPageState {
-    userNameErrors?: string[],
-    passwordErrors?: string[],
+    errors?: string[],
     fromUrl?: string | null
 }
 
@@ -19,14 +19,13 @@ export default class Login extends Component<any, LoginPageState> {
         const fromUrl = query.get('from');
         
         this.state = {
-            userNameErrors: undefined,
-            passwordErrors: undefined,
+            errors: undefined,
             fromUrl
         };
     }
 
     render() {
-        const { userNameErrors, passwordErrors, fromUrl } = this.state;
+        const { errors, fromUrl } = this.state;
         
         let registerPageUrl = '/register';
         if(fromUrl) registerPageUrl += `?from=${fromUrl}`;
@@ -34,23 +33,19 @@ export default class Login extends Component<any, LoginPageState> {
         return <AuthContextConsumer>
             {({setStatus}) =>
                 <div className="m-auto text-center" style={{width: '50%'}}>
+                    {errors
+                        ? <span className="text-danger">
+                            {errors.map(e=><p>{e}</p>)}
+                        </span>
+                        : null
+                    }
                     <form>
                         <div className="form-group my-1">
                             <label>Имя пользователя</label>
-                            {userNameErrors
-                                ? <span className="text-danger">
-                                    {userNameErrors.map(err=><p>{err}</p>)}
-                                </span>
-                                : null}
                             <input className="form-control" type="text" name="username"/>
                         </div>
                         <div className="form-group mb-1">
                             <label>Пароль</label>
-                            {passwordErrors
-                                ? <span className="text-danger">
-                                    {passwordErrors.map(err=><p>{err}</p>)}
-                                </span>
-                                : null}
                             <input className="form-control" type="text" name="password"/>
                         </div>
                         <button className="btn btn-lg btn-outline-success mb-1"
@@ -93,12 +88,18 @@ export default class Login extends Component<any, LoginPageState> {
                 if (!fromUrl) return;
                 window.location.replace(fromUrl);
             }
-            
-            if (response.status === 400) {
+        }).catch((err: AxiosError)=> {
+            if (err.response?.status === 400) {
+                const result: any = err.response?.data;
                 const errors = result.errors;
+
+                const stateErrors: string[] = [];
+                for (const e in errors) {
+                    stateErrors.push(errors[e][0]);
+                }
+
                 this.setState({
-                    userNameErrors: errors.UserName,
-                    passwordErrors: errors.Password
+                    errors: stateErrors
                 });
             }
         });

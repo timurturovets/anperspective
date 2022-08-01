@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Security.Claims;
+using System.Text.RegularExpressions;
 using PerspectiveAPI.Services;
 
 namespace PerspectiveAPI;
@@ -44,6 +45,9 @@ public static class Extensions
 
     public static IWebHostEnvironment GetEnvironment(this HttpContext context)
         => context.RequestServices.GetRequiredService<IWebHostEnvironment>();
+    
+    public static ClaimsPrincipal? GetPrincipal(this HttpContext context)
+        => context.Items["User"] as ClaimsPrincipal;
     public static void UseAuthMiddleware(this WebApplication app)
         => app.UseMiddleware<AuthMiddleware>();
 

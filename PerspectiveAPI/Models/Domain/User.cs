@@ -2,6 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using PerspectiveAPI.Models.DTO;
 
 namespace PerspectiveAPI.Models.Domain;
 
@@ -10,13 +11,16 @@ public class User
     public string? UserId { get; set; }
     public string? UserName { get; set; }
     public UserRole Role { get; set; } = UserRole.Default;
+
     public string GetRole() => Role switch
     {
         UserRole.Editor => "Editor",
         UserRole.Admin => "Admin",
         _ => "Default"
     };
-    
+
+    public List<Post> CreatedPosts { get; set; } = new();
+
     #region Password
     private string? _password;
     [BackingField(nameof(_password))]
@@ -45,6 +49,16 @@ public class User
             ));
     }
     #endregion
+
+    public UserDto ToDto()
+    {
+        return new UserDto
+        {
+            UserName = UserName,
+            Role = GetRole(),
+            CreatedNewsIDs = CreatedPosts.Select(p=> p.PostId).ToArray()
+        };
+    }
 }
 
 public enum UserRole
