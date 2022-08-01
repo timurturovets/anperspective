@@ -7,6 +7,7 @@ import React    from 'react'
 import Layout   from './components/Layout'
 import Home     from './components/Home'
 import Post     from './components/Post'
+import About    from './components/About'
 import Edit     from './components/Edit'
 import Create   from './components/Create'
 import EditPost from './components/EditPost'
@@ -24,9 +25,9 @@ export default class App extends React.Component {
     return <BrowserRouter>
         <Layout>
           <Routes>
-            <Route path="/" element={<Home />}/>
-            <Route path="/post/" element={<Post />}/>
-            <Route path="/about" />
+            <Route path="/" element={<Home />} />
+            <Route path="/post/" element={<Post />} />
+            <Route path="/about" element={<About />} />
             <Route path="/account" />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
