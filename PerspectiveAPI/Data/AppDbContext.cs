@@ -9,6 +9,14 @@ public sealed class AppDbContext : DbContext
 {
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<User>()
+            .HasData(new User
+            {
+                UserId = Guid.NewGuid().ToString(),
+                UserName = "admin",
+                Password = "admin",
+                Role = UserRole.Admin
+            });
         builder.Entity<Post>()
             .HasOne(p => p.Author)
             .WithMany(u => u.CreatedPosts)

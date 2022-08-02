@@ -49,8 +49,15 @@ export default class Edit extends Component<any, EditState> {
     
     getPosts = async () => {
         await request('/api/edit/all').then(response => {
+                if(response.status === 204) {
+                    this.setState({
+                        isLoading: false, 
+                        news: [],
+                        message: 'Пока-что не создано ни одного поста.'
+                    });
+                    return;
+                }
                 const news = response.data;
-                console.log(news);
                 this.setState({isLoading: false, news: news});
         }).catch(err=>{
             console.log(err);
