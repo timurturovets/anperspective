@@ -35,7 +35,7 @@ export default class Login extends Component<any, LoginPageState> {
                 <div className="m-auto text-center" style={{width: '50%'}}>
                     {errors
                         ? <span className="text-danger">
-                            {errors.map(e=><p>{e}</p>)}
+                            {errors.map(e=><p key={e}>{e}</p>)}
                         </span>
                         : null
                     }
@@ -67,6 +67,11 @@ export default class Login extends Component<any, LoginPageState> {
             : Promise<void> =>  {
         
         event.preventDefault();
+        
+        this.setState({
+            errors: undefined
+        });
+        
         const form = (event.target as HTMLInputElement).form as HTMLFormElement;
         const formData = new FormData(form);
 
@@ -100,6 +105,12 @@ export default class Login extends Component<any, LoginPageState> {
 
                 this.setState({
                     errors: stateErrors
+                });
+            }
+            
+            if (err.response?.status === 404) {
+                this.setState({
+                    errors:['Пользователя с таким ником не существует.']
                 });
             }
         });

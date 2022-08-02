@@ -1,5 +1,5 @@
 ﻿export default interface UserInfo {
-    name: string,
+    userName: string,
     role: string,
     createdNewsIDs: string[]
 }

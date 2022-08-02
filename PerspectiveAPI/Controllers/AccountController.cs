@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
 using PerspectiveAPI.Data.Repositories;
@@ -11,10 +11,11 @@ namespace PerspectiveAPI.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly UserRepository _userRepo;
-
-    public AccountController(UserRepository userRepo)
+    private readonly AuthService _authService;
+    public AccountController(UserRepository userRepo, AuthService authService)
     {
         _userRepo = userRepo;
+        _authService = authService;
     }
 
     [HttpGet("info")]
@@ -22,17 +23,18 @@ public class AccountController : ControllerBase
     {
         var principal = HttpContext.GetPrincipal();
         var user = _userRepo.GetByClaims(principal!);
-
+        HttpContext.L<AccountController>()
+            .LogCritical($"user is null: {user is null}, claims name: {principal?.Claims.FirstOrDefault(c=>c.Type=="name")?.Value}");
         if (user is null) return NotFound();
         return Ok(user.ToDto());
     }
 
     [HttpPut("change-username")]
-    public IActionResult ChangeUsername([FromBody] string newUserName)
+    public IActionResult ChangeUsername([FromForm] string newUserName)
     {
         var principal = HttpContext.GetPrincipal();
         var user = _userRepo.GetByClaims(principal!);
-
+        HttpContext.L<AccountController>().LogCritical($"new username: {newUserName}");
         if (user is null) return NotFound();
 
         if (_userRepo.CheckIfNameIsTaken(newUserName)) return Conflict();
@@ -40,6 +42,8 @@ public class AccountController : ControllerBase
         user.UserName = newUserName;
         
         _userRepo.Update(user);
-        return Ok();
+        
+        var jwtInfo = _authService.GetJwtInfo(user);
+        return Ok(jwtInfo);
     }
 }

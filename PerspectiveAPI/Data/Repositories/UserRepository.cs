@@ -10,7 +10,7 @@ public class UserRepository : RepositoryBase<User>
 
     public User? GetByClaims(ClaimsPrincipal principal)
     {
-        var name = principal.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+        var name = principal.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
         return name is null 
             ? null 
             : GetBy(u => u.UserName == name);

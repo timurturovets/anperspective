@@ -1,9 +1,11 @@
 ﻿import React, { Component } from 'react'
 import request from "../Requests/request";
+import { setJWTInfo } from "../Requests/JWTLocalStorage";
 import AuthRoute from './Authentication/AuthRoute';
 import Loading from "./Util/Loading";
 import UserInfo from "../Interfaces/UserInfo";
-import {AxiosError, AxiosResponse} from "axios";
+import { AxiosError } from "axios";
+import JWTInfo from "../Interfaces/JWTInfo";
 
 interface AccountState {
     isLoading: boolean,
@@ -37,11 +39,11 @@ export default class Account extends Component<any, AccountState> {
                     {message && <b>{message}</b>}
                     <div className="form-group">
                         <h3>Ваш никнейм</h3>
-                        <input className="form-control form-control-sm" type="text" defaultValue={user?.name} 
+                        <input className="form-control form-control-sm w-25" type="text" defaultValue={user?.userName} 
                            onChange={this.handleNameChange}/>
                         {!isSaved && <><b>Есть несохранённые изменения.</b><br /></>}
                         <button className="btn btn-outline-success" 
-                            onChange={this.handleSave} disabled={isSaved}>Сохранить</button>
+                            onClick={this.handleSave} disabled={isSaved}>Сохранить</button>
                     </div>
                 </>
             }
@@ -51,20 +53,20 @@ export default class Account extends Component<any, AccountState> {
     fetchData = async () => {
         await request('/api/account/info').then(response => {
             const result = response.data as UserInfo;
-            console.log(result);
             this.setState({
                 isLoading: false,
                 user: result
             });
+            console.log(this.state.user);
         });
     }
     
     handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {user} = this.state;
+        const { user } = this.state;
         this.setState({
             user: {
                 ...user,
-                name: e.target.value
+                userName: e.target.value
             } as UserInfo,
             isSaved: false
         });
@@ -74,6 +76,7 @@ export default class Account extends Component<any, AccountState> {
         e.preventDefault();
         
         const { user } = this.state;
+        console.log(user);
         if(!user) return;
         
         this.setState({
@@ -81,23 +84,28 @@ export default class Account extends Component<any, AccountState> {
             message: undefined
         });
         
-        const { name } = user;
+        const { userName } = user;
+        
+        const fd = new FormData();
+        fd.append('newUserName', userName);
         
         await request('/api/account/change-username',{
             method: 'PUT',
-            body: JSON.stringify({newUserName:name})
+            body: fd
         })
             .then(response=> {
-            this.setState({
-                isSaved: true,
-                message: `Имя успешно изменено на ${name}`
-            });
+                const jwtInfo = response.data as JWTInfo;
+                setJWTInfo(jwtInfo);
+                this.setState({
+                    isSaved: true,
+                    message: `Имя успешно изменено на ${userName}`
+                });
         })
             .catch((err: AxiosError)=> {
            if(err.response?.status === 409) {
                this.setState({
                    isSaved: false,
-                   message: `Имя ${name} уже занято, попробуйте другое.`
+                   message: `Имя ${userName} уже занято, попробуйте другое.`
                });
            }
         });

@@ -1,4 +1,6 @@
-﻿interface JWTInfo {
+﻿import { enableRequestInterceptor } from './request';
+
+interface JWTInfo {
     token: string,
     expires: number,
     role: string
@@ -13,6 +15,7 @@ export function setJWTInfo(info: JWTInfo) : void {
         role: info.role
     };
     localStorage.setItem('jwt', JSON.stringify(item));
+    enableRequestInterceptor(item.token);
 }
 
 export function getJWTInfo() : JWTInfo | undefined {

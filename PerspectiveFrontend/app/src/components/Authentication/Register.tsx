@@ -60,6 +60,11 @@ export default class Register extends Component<any, RegisterPageState> {
             : Promise<void> =>  {
         
         event.preventDefault();
+        
+        this.setState({
+            errors: undefined
+        });
+        
         const form = (event.target as HTMLInputElement).form as HTMLFormElement;
         const formData = new FormData(form);
 
