@@ -23,8 +23,7 @@ public class AccountController : ControllerBase
     {
         var principal = HttpContext.GetPrincipal();
         var user = _userRepo.GetByClaims(principal!);
-        HttpContext.L<AccountController>()
-            .LogCritical($"user is null: {user is null}, claims name: {principal?.Claims.FirstOrDefault(c=>c.Type=="name")?.Value}");
+        
         if (user is null) return NotFound();
         return Ok(user.ToDto());
     }
@@ -34,7 +33,6 @@ public class AccountController : ControllerBase
     {
         var principal = HttpContext.GetPrincipal();
         var user = _userRepo.GetByClaims(principal!);
-        HttpContext.L<AccountController>().LogCritical($"new username: {newUserName}");
         if (user is null) return NotFound();
 
         if (_userRepo.CheckIfNameIsTaken(newUserName)) return Conflict();

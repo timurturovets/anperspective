@@ -34,7 +34,6 @@ public class AuthController : ControllerBase
             UserName = dto.UserName,
             Password = dto.Password
         };
-        HttpContext.L<AuthController>().LogCritical($"Register name: {dto.UserName} password: {dto.Password}");
         _userRepo.Add(user);
         
         var jwtInfo = _authService.GetJwtInfo(user);

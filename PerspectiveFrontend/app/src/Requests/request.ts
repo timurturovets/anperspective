@@ -36,7 +36,5 @@ export function configureAuthentication(info?: JWTInfo) {
         if(token) enableRequestInterceptor(token);
         return;
     }
-    const { token } = info;
-    enableRequestInterceptor(token);
     setJWTInfo(info);
 }

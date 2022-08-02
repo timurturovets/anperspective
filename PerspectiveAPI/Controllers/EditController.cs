@@ -88,7 +88,7 @@ public class EditController : ControllerBase
         _postRepo.Delete(post);
         return Ok();
     }
-    
+        
     [HttpGet("post")]
     public IActionResult GetPost([FromQuery] string id)
     {
